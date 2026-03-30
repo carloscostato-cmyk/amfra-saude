@@ -14,9 +14,7 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    target_port = int(os.getenv("PORT", os.getenv("APP_PORT", "5001")))
-    app.run(
-        host="0.0.0.0",
-        port=target_port,
-        debug=False,
-    )
+    # Railway fornece a porta na variável de ambiente PORT. 
+    # Usamos ela para garantir que o roteador encontre o app.
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
