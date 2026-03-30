@@ -142,6 +142,19 @@ def company_nr1_report(company_id):
     )
 
 
+@admin_bp.route("/company/delete/<int:company_id>", methods=["POST"])
+@login_required
+def company_delete(company_id):
+    company = Company.query.get_or_404(company_id)
+    # Deletar todos os sub-registros (Employees e Submissions) se necessário
+    # Dependendo da configuração do DB (cascading), isso pode ser automático.
+    # Aqui deletamos a empresa e o SQLAlchemy cuida do resto se os relacionamentos estiverem corretos.
+    db.session.delete(company)
+    db.session.commit()
+    flash(f"Empresa '{company.name}' e todos os seus dados foram excluídos permanentemente.", "success")
+    return redirect(url_for('admin.company_list'))
+
+
 @admin_bp.get("/submissions/<int:submission_id>")
 @login_required
 def submission_detail(submission_id):

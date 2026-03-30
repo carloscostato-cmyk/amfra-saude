@@ -46,17 +46,27 @@
                                 </span>
                             </td>
                             <td style="color: var(--text-soft);">{{ company.created_at.strftime("%d/%m/%Y") }}</td>
-                            <td style="text-align: right; padding-right: 0;">
-                                <div style="display: inline-flex; gap: 8px;">
-                                    <button type="button" class="button button--ghost button--compact" id="copyLinkBtn-{{ company.id }}" data-copy-text="{{ company.public_url }}" style="border: none; background: transparent; box-shadow: none; color: var(--accent);">
+                            <td style="text-align: right; padding-right: 0; white-space: nowrap;">
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                                    <button type="button" class="button button--ghost button--compact" 
+                                            onclick="copyLink('{{ url_for('public.questionnaire_by_token', token=company.token, _external=True) }}', this)"
+                                            style="border-color: var(--line); color: var(--text-soft);">
                                         Copiar Link
                                     </button>
-                                    <a class="button button--ghost button--compact" href="{{ url_for('admin.company_detail', company_id=company.id) }}">
+                                    
+                                    <a class="button button--ghost button--compact" href="{{ url_for('admin.company_detail', company_id=company.id) }}" style="border-color: var(--line); color: var(--text);">
                                         Detalhes
                                     </a>
-                                    <a class="button button--primary button--compact" href="{{ url_for('admin.company_nr1_report', company_id=company.id) }}">
+
+                                    <a class="button button--primary button--compact" href="{{ url_for('admin.company_nr1_report', company_id=company.id) }}" style="background: var(--accent) !important;">
                                         Abrir Estudo NR-1
                                     </a>
+
+                                    <form action="{{ url_for('admin.company_delete', company_id=company.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('ATENÇÃO: Você excluirá permanentemente esta empresa e TODOS os resultados de seus colaboradores. Confirmar exclusão?');">
+                                        <button type="submit" class="button button--compact" style="background: #ef4444 !important; color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer;">
+                                            &times;
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
