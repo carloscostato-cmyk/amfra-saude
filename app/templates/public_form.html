@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Questionário de Saúde Organizacional | {{ company.name }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="public-shell">
+    <aside class="public-intro">
+        <div class="public-intro__surface">
+            <span class="section-kicker">Estudo NR-1: {{ company.name }}</span>
+            <h1>Questionário de Mapeamento de Fatores Psicossociais</h1>
+            <p class="lede">
+                Este questionário faz parte das diretrizes de segurança emocional e mapeamento de riscos psicossociais 
+                em parceria com a <strong>{{ company.name }}</strong>.
+            </p>
+
+            <dl class="intro-details">
+                <div>
+                    <dt>Tempo estimado</dt>
+                    <dd>3 a 5 minutos</dd>
+                </div>
+                <div>
+                    <dt>Estrutura</dt>
+                    <dd>10 perguntas, 4 alternativas cada</dd>
+                </div>
+                <div>
+                    <dt>Privacidade (LGPD)</dt>
+                    <dd>As respostas são sigilosas e processadas diretamente pela equipe clínica. A empresa tem acesso 
+                    apenas a relatórios genéricos anonimizados, sem expor sua identificação perante ao RH.</dd>
+                </div>
+            </dl>
+
+            <div class="privacy-note">
+                <strong>Confidencialidade:</strong>
+                <span>
+                    os dados são tratados como informação sensível sob sigilo médico-paciente.
+                </span>
+            </div>
+        </div>
+    </aside>
+
+    <section class="form-stage">
+        <div class="form-stage__header">
+            <span class="section-kicker">Suas Respostas</span>
+            <h2>Preencha o questionário abaixo.</h2>
+            <p>Selecione a alternativa que melhor representa sua experiência atual na empresa.</p>
+        </div>
+
+        <form method="post" class="assessment-form" novalidate>
+            {{ form.hidden_tag() }}
+
+            <section class="form-section">
+                <div class="field-grid">
+                    <div class="field">
+                        {{ form.first_name.label(class="field__label") }}
+                        {{ form.first_name(class="field__control", placeholder="Seu nome") }}
+                        {% for error in form.first_name.errors %}
+                            <span class="field__error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="field">
+                        {{ form.last_name.label(class="field__label") }}
+                        {{ form.last_name(class="field__control", placeholder="Seu sobrenome") }}
+                        {% for error in form.last_name.errors %}
+                            <span class="field__error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="field" style="display: none;">
+                        {{ form.questionnaire_date.label(class="field__label") }}
+                        {{ form.questionnaire_date(class="field__control") }}
+                        {% for error in form.questionnaire_date.errors %}
+                            <span class="field__error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section class="questionnaire-list" aria-label="Perguntas da avaliação">
+                {% for question, field in question_pairs %}
+                    <fieldset class="question-block">
+                        <legend class="question-block__legend">
+                            <span class="question-block__number">{{ "%02d"|format(question.number) }}</span>
+                            <span>{{ question.text }}</span>
+                        </legend>
+
+                        <div class="answer-grid">
+                            {% for subfield in field %}
+                                <label class="choice-card" for="{{ subfield.id }}">
+                                    {{ subfield(class="choice-card__input") }}
+                                    <span class="choice-card__body">
+                                        <span class="choice-card__letter">{{ subfield._value() }}</span>
+                                        <span class="choice-card__text">{{ subfield.label.text }}</span>
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        </div>
+
+                        {% for error in field.errors %}
+                            <span class="field__error">{{ error }}</span>
+                        {% endfor %}
+                    </fieldset>
+                {% endfor %}
+            </section>
+
+            <div class="form-actions">
+                <div class="form-actions__text">
+                    Ao enviar, o questionário será criptografado e salvo para a análise da Doutora. 
+                    Você não poderá editar as respostas e só é permitida uma resposta por colaborador.
+                </div>
+                {{ form.submit(class="button button--primary button--large") }}
+            </div>
+        </form>
+    </section>
+</section>
+{% endblock %}

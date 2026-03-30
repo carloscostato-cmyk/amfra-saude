@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhe da Avaliação | {{ app_name }}{% endblock %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="detail-shell">
+    <div class="detail-hero">
+        <div class="detail-hero-content">
+            {% if submission.patient_photo %}
+            <div class="patient-photo-hero">
+                <img src="{{ submission.patient_photo }}" alt="Foto de {{ submission.patient_name }}" class="patient-photo-hero-img">
+            </div>
+            {% endif %}
+            <div>
+                <span class="section-kicker">Resposta individual</span>
+                <h1>{{ submission.patient_name }}</h1>
+                <p>Visualização protegida com leitura clínica, síntese do resultado e mapa visual das dimensões mais sensíveis da resposta.</p>
+            </div>
+        </div>
+
+        <div class="detail-hero__actions">
+            <button type="button" class="button button--ghost" data-copy-text="{{ detail_url }}">Copiar link</button>
+            <button type="button" class="button button--primary" onclick="window.print()">Imprimir / PDF</button>
+        </div>
+    </div>
+
+    <section class="detail-summary">
+        <article class="summary-panel">
+            <span class="section-kicker">Resultado</span>
+            <h2>{{ submission.total_score }} pontos</h2>
+            <p class="classification-highlight">{{ submission.classification }}</p>
+            <p>{{ submission.interpretation }}</p>
+        </article>
+
+        {% if submission.patient_photo %}
+        <article class="summary-panel summary-panel--photo">
+            <span class="section-kicker">Foto do Paciente</span>
+            <div class="patient-photo-container">
+                <img src="{{ submission.patient_photo }}" alt="Foto de {{ submission.patient_name }}" class="patient-photo-detail">
+            </div>
+        </article>
+        {% else %}
+        <article class="summary-panel summary-panel--muted">
+            <span class="section-kicker">Metadados</span>
+            <dl class="meta-list">
+                <div>
+                    <dt>Data informada</dt>
+                    <dd>{{ submission.questionnaire_date.strftime("%d/%m/%Y") }}</dd>
+                </div>
+                <div>
+                    <dt>Data/hora do envio</dt>
+                    <dd>{{ submission.created_at.strftime("%d/%m/%Y %H:%M") }}</dd>
+                </div>
+                <div>
+                    <dt>UUID</dt>
+                    <dd>{{ submission.uuid }}</dd>
+                </div>
+            </dl>
+        </article>
+        {% endif %}
+    </section>
+
+    <section class="detail-grid">
+        <article class="detail-panel">
+            <div class="detail-panel__header">
+                <span class="section-kicker">Resultado e gráfico</span>
+                <h2>Mapa clínico por dimensão</h2>
+            </div>
+
+            <div class="rn1-levels-chart">
+                <h3 class="rn1-chart-title">Classificação RN1 - Níveis de Relacionamento Narcisista</h3>
+                <div class="rn1-chart-container">
+                    <canvas id="rn1LevelsChart"></canvas>
+                </div>
+                <div class="rn1-legend">
+                    <div class="rn1-legend-item rn1-legend-item--level1">
+                        <span class="rn1-legend-label">Nível 1 (10-15 pts)</span>
+                        <span class="rn1-legend-desc">Relacionamento Saudável</span>
+                    </div>
+                    <div class="rn1-legend-item rn1-legend-item--level2">
+                        <span class="rn1-legend-label">Nível 2 (16-25 pts)</span>
+                        <span class="rn1-legend-desc">Sinais de Alerta</span>
+                    </div>
+                    <div class="rn1-legend-item rn1-legend-item--level3">
+                        <span class="rn1-legend-label">Nível 3 (26-35 pts)</span>
+                        <span class="rn1-legend-desc">Relacionamento Tóxico</span>
+                    </div>
+                    <div class="rn1-legend-item rn1-legend-item--level4">
+                        <span class="rn1-legend-label">Nível 4 (36-40 pts)</span>
+                        <span class="rn1-legend-desc">Abuso Narcisista Severo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator-strip">
+                {% for indicator in top_indicators %}
+                    <div class="indicator-pill indicator-pill--score-{{ indicator.score }}">
+                        <span>P{{ indicator.question_number }} · {{ indicator.short_label }}</span>
+                        <strong>{{ indicator.score }}/4</strong>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="chart-toolbar" role="toolbar" aria-label="Controles do gráfico">
+                <div class="chart-toolbar__group">
+                    <button type="button" class="button button--ghost button--compact" data-chart-mode="ordered">Ordem original</button>
+                    <button type="button" class="button button--ghost button--compact" data-chart-mode="severity">Mais críticos</button>
+                    <button type="button" class="button button--ghost button--compact" data-chart-mode="focus">Somente atenção</button>
+                    <button type="button" class="button button--ghost button--compact" data-chart-mode="all">Mostrar tudo</button>
+                </div>
+                <p class="chart-toolbar__hint">Passe o mouse para inspecionar, clique em uma barra para fixar e rolar até a resposta correspondente.</p>
+            </div>
+
+            <div class="chart-legend" aria-label="Faixas do gráfico">
+                <div class="chart-legend__item chart-legend__item--score-1">1 · Base estável</div>
+                <div class="chart-legend__item chart-legend__item--score-2">2 · Observação</div>
+                <div class="chart-legend__item chart-legend__item--score-3">3 · Atenção clínica</div>
+                <div class="chart-legend__item chart-legend__item--score-4">4 · Alta criticidade</div>
+            </div>
+
+            <div class="chart-stage">
+                <div class="chart-box">
+                    <canvas id="questionScoreChart" aria-label="Gráfico horizontal de pontuação por pergunta"></canvas>
+                </div>
+
+                <aside class="chart-inspector" aria-live="polite">
+                    <div>
+                        <span class="section-kicker">Detalhe em foco</span>
+                        <h3 id="chartInspectorTitle">Passe o mouse em uma barra</h3>
+                        <p id="chartInspectorQuestion">O painel exibirá a dimensão, a pontuação e a leitura clínica da resposta selecionada.</p>
+                    </div>
+                    <div class="chart-inspector__meta">
+                        <div>
+                            <span>Dimensão</span>
+                            <strong id="chartInspectorDimension">-</strong>
+                        </div>
+                        <div>
+                            <span>Pontuação</span>
+                            <strong id="chartInspectorScore">-</strong>
+                        </div>
+                        <div>
+                            <span>Leitura</span>
+                            <strong id="chartInspectorIntensity">-</strong>
+                        </div>
+                    </div>
+                    <p class="chart-inspector__hint">Clique em qualquer barra para fixar o item e abrir a resposta relacionada logo abaixo.</p>
+                </aside>
+            </div>
+
+            <p class="chart-footnote">Organizado para leitura rápida, impressão e discussão clínica por tema central de cada pergunta.</p>
+        </article>
+    </section>
+
+    <section class="detail-panel detail-panel--answers">
+        <div class="detail-panel__header">
+            <span class="section-kicker">Respostas selecionadas</span>
+            <h2>Leitura item a item</h2>
+        </div>
+
+        <div class="answers-list">
+                {% for answer in submission.answers %}
+                <article class="answer-item" id="answer-{{ answer.question_number }}" data-question-anchor="{{ answer.question_number }}">
+                    <div class="answer-item__index">{{ "%02d"|format(answer.question_number) }}</div>
+                    <div class="answer-item__content">
+                        <h3>{{ answer.question_text }}</h3>
+                        <p><strong>Alternativa {{ answer.selected_option }}</strong> — {{ answer.selected_text }}</p>
+                    </div>
+                    <div class="answer-item__score">{{ answer.score }} pt</div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.submissionChartData = {{ chart_points|tojson }};
+    </script>
+    <script defer src="{{ url_for('static', filename='js/submission_detail.js') }}"></script>
+{% endblock %}

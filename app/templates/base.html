@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="AMFRA SAÚDE MENTAL LTDA: plataforma segura para questionários pessoais e acompanhamento administrativo.">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="{{ body_class or '' }}">
+    <div class="site-backdrop" aria-hidden="true"></div>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brandmark" href="{% if current_user.is_authenticated %}{{ url_for('admin.company_list') }}{% else %}{{ url_for('admin.login') }}{% endif %}">
+                <span class="brandmark__eyebrow">Avaliação Clínica Digital</span>
+                <span class="brandmark__title" style="font-size: 1.5rem; letter-spacing: -0.03em;">AMFRA SAÚDE MENTAL</span>
+            </a>
+
+            <div class="site-header__actions">
+                {% if current_user.is_authenticated %}
+                    <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Admin</a>
+                    <form method="post" action="{{ url_for('admin.logout') }}" class="logout-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="button button--ghost">Sair</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-stack" aria-label="Mensagens do sistema">
+                {% for category, message in messages %}
+                    <div class="flash flash--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <main class="page-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer" style="text-align: center;">
+        <p>Ambiente pensado para confidencialidade, clareza clínica e proteção de dados sensíveis.</p>
+    </footer>
+
+    <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

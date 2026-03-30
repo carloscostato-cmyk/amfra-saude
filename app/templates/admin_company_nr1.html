@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Estudo NR-1 - {{ company.name }} | Admin{% endblock %}
+
+{% block content %}
+<section class="admin-shell">
+    <div class="admin-shell__header">
+        <div>
+            <span class="section-kicker">Saúde Organizacional e Riscos Psicossociais</span>
+            <h1>Estudo NR-1: {{ company.name }}</h1>
+            <p>Análise agregada de riscos psicossociais e segurança emocional do ambiente corporativo.</p>
+        </div>
+        <div class="admin-shell__actions" style="margin-top: 15px;">
+            <button onclick="window.print()" class="button button--primary">Imprimir Relatório</button>
+            <a href="{{ url_for('admin.company_detail', company_id=company.id) }}" class="button button--ghost">Sair</a>
+        </div>
+    </div>
+
+    {% if report.status == "empty" %}
+    <div class="dashboard-grid">
+        <section class="results-panel" style="width: 100%; text-align: center; padding: 40px;">
+            <h2>Dados Insuficientes</h2>
+            <p>Nenhuma resposta foi recebida dos colaboradores ainda para formular o estudo da NR-1.</p>
+        </section>
+    </div>
+    {% else %}
+    <section class="metric-strip" aria-label="Métricas de Engajamento da NR-1">
+        <article class="metric">
+            <span class="metric__label">Taxa de Participação</span>
+            <strong class="metric__value">{{ report.participation_rate }}%</strong>
+        </article>
+        <article class="metric">
+            <span class="metric__label">Média Global (Max 40)</span>
+            <strong class="metric__value">{{ report.company_average_score }}</strong>
+        </article>
+        <article class="metric">
+            <span class="metric__label">Riscos Críticos</span>
+            <strong class="metric__value" style="color: {% if report.needs_immediate_action %}#dc3545{% else %}inherit{% endif %}">{{ report.critical_percentage }}%</strong>
+        </article>
+    </section>
+
+    <section class="dashboard-grid" style="margin-top:20px;">
+        <section class="results-panel" style="width: 100%;">
+            <div class="results-panel__header">
+                <div>
+                    <span class="section-kicker">Distribuição</span>
+                    <h2>Níveis de Risco</h2>
+                </div>
+            </div>
+            <div style="padding: 20px;">
+                <ul style="list-style:none; padding:0; margin:0;">
+                    {% for classification, count in report.risk_distribution.items() %}
+                        <li style="display:flex; justify-content:space-between; margin-bottom: 10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                            <span>{{ classification }}</span>
+                            <strong>{{ count }} avaliações ({{ ((count/report.total_respondents)*100)|round(1) }}%)</strong>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            {% if report.needs_immediate_action %}
+            <div style="margin: 20px; padding: 20px; background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; border-radius: 4px;">
+                <h3 style="margin-top:0;">⚠ Alerta do Sistema NR-1: Ação Imediata Recomendada</h3>
+                <p style="margin-bottom:0;">Foi detectada uma alta densidade de resultados Críticos (acima de 15% de casos graves). Recomenda-se programa intensivo de intervenção organizacional, escuta ativa acompanhada e/ou assessoria técnica psiquiátrica HR.</p>
+            </div>
+            {% endif %}
+        </section>
+    </section>
+
+    <section class="dashboard-grid" style="margin-top:20px;">
+        <section class="results-panel" style="width: 100%;">
+            <div class="results-panel__header">
+                <div>
+                    <span class="section-kicker">Ranking</span>
+                    <h2>Tópicos de Maior Risco</h2>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tópico</th>
+                            <th>Acompanhamento Clínico</th>
+                            <th>Média Risco (1 a 4)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for topic in report.top_risk_topics %}
+                        <tr>
+                            <td><strong>{{ topic.topic_name }}</strong></td>
+                            <td style="font-size:0.9em; max-width: 400px; white-space: normal;">{{ topic.question_text }}</td>
+                            <td><strong style="color: #dc3545; font-size:1.2em;">{{ topic.average_score }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

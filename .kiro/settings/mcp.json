@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "deiapsic-project": {
+      "command": "node",
+      "args": ["mcp-server.js"],
+      "disabled": false,
+      "autoApprove": [],
+      "env": {
+        "PROJECT_NAME": "DeiaPsic",
+        "PROJECT_TYPE": "Flask Clinical Assessment System",
+        "PYTHON_VERSION": "3.11+",
+        "DATABASE": "SQLite (dev) / PostgreSQL (prod)"
+      }
+    }
+  }
+}

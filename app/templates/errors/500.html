@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Erro interno | {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="status-panel">
+    <span class="section-kicker">500</span>
+    <h1>Houve uma falha interna controlada.</h1>
+    <p>O sistema reverteu a operação pendente. Tente novamente em instantes ou revise a configuração do ambiente.</p>
+    <a href="{{ url_for('public.index') }}" class="button button--primary">Voltar ao início</a>
+</section>
+{% endblock %}

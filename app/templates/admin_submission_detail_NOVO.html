@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+
+{% block title %}Análise Clínica Avançada | {{ app_name }}{% endblock %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        .clinical-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .patient-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .summary-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .kernberg-section, .kohut-section, .pni-section {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .researcher-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .researcher-info h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .researcher-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 5px 0 0 0;
+        }
+        
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .dimension-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .dimension-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .dimension-score {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .score-bar {
+            flex: 1;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .score-fill.level-1 { background: #2f7667; }
+        .score-fill.level-2 { background: #8b9270; }
+        .score-fill.level-3 { background: #b07c43; }
+        .score-fill.level-4 { background: #a44339; }
+        
+        .clinical-interpretation {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .clinical-interpretation h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+        
+        .clinical-interpretation p {
+            font-size: 14px;
+            color: #546e7a;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .pni-dimensions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .pni-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .pni-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .pni-score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .therapeutic-recommendations {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+        
+        .therapeutic-recommendations h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .recommendation-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .recommendation-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .recommendation-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .recommendation-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .recommendation-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="detail-shell">
+    <!-- CABEÇALHO CLÍNICO -->
+    <div class="clinical-header">
+        <h1 style="font-size: 42px; margin-bottom: 10px;">{{ submission.patient_name }}</h1>
+        <p style="font-size: 18px; opacity: 0.9;">Análise Clínica Baseada em Evidências Científicas</p>
+        
+        <div class="patient-summary">
+            <div class="summary-card">
+                <div class="summary-label">Pontuação Total</div>
+                <div class="summary-value">{{ submission.total_score }}/40</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Classificação</div>
+                <div class="summary-value" style="font-size: 16px;">{{ submission.classification }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Data da Avaliação</div>
+                <div class="summary-value" style="font-size: 20px;">{{ submission.questionnaire_date.strftime("%d/%m/%Y") }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Nível de Risco</div>
+                <div class="summary-value" style="font-size: 20px;">
+                    {% if submission.total_score >= 36 %}ALTO
+                    {% elif submission.total_score >= 26 %}MÉDIO
+                    {% elif submission.total_score >= 16 %}BAIXO
+                    {% else %}MÍNIMO{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANÁLISE SEGUNDO OTTO KERNBERG -->
+    <div class="kernberg-section">
+        <div class="section-header">
+            <div class="researcher-photo">OK</div>
+            <div class="researcher-info">
+                <h2>Análise Segundo Otto Kernberg</h2>
+                <p>Modelo Estrutural de Organização da Personalidade Narcísica</p>
+            </div>
+        </div>
+        
+        <div class="dimensions-grid">
+            <div class="dimension-card">
+                <div class="dimension-title">🎭 Grandiosidade Patológica</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[4].score }}" style="width: {{ (chart_points[4].score / 4 * 100)|int }}%">
+                            {{ chart_points[4].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Avalia o senso inflado de importância e necessidade de admiração constante. Kernberg identifica isso como defesa contra sentimentos de inferioridade.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">💔 Falta de Empatia</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[3].score }}" style="width: {{ (chart_points[3].score / 4 * 100)|int }}%">
+                            {{ chart_points[3].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Incapacidade de reconhecer ou identificar-se com sentimentos alheios. Kernberg relaciona à falha no desenvolvimento de relações objetais internalizadas.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">😤 Raiva Narcísica</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[2].score }}" style="width: {{ (chart_points[2].score / 4 * 100)|int }}%">
+                            {{ chart_points[2].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Reações intensas de raiva quando o self grandioso é ameaçado. Kernberg descreve como agressão primitiva não integrada.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">🎪 Exploração Interpessoal</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[5].score }}" style="width: {{ (chart_points[5].score / 4 * 100)|int }}%">
+                            {{ chart_points[5].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Uso instrumental de outros para gratificação narcísica. Kernberg identifica como falha na constância objetal e relações superficiais.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANÁLISE SEGUNDO HEINZ KOHUT -->
+    <div class="kohut-section">
+        <div class="section-header">
+            <div class="researcher-photo">HK</div>
+            <div class="researcher-info">
+                <h2>Análise Segundo Heinz Kohut</h2>
+                <p>Psicologia do Self e Necessidades Narcísicas</p>
+            </div>
+        </div>
+        
+        <div class="dimensions-grid">
+            <div class="dimension-card">
+                <div class="dimension-title">🪞 Necessidade de Espelhamento</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[8].score }}" style="width: {{ (chart_points[8].score / 4 * 100)|int }}%">
+                            {{ chart_points[8].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Kohut descreve a necessidade de validação externa constante como falha no desenvolvimento do self coeso. Autoestima frágil dependente de aprovação.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">👑 Idealização Primitiva</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[1].score }}" style="width: {{ (chart_points[1].score / 4 * 100)|int }}%">
+                            {{ chart_points[1].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Kohut identifica a necessidade de figuras idealizadas para manter coesão do self. Quando falham, ocorre fragmentação narcísica.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">🎭 Vulnerabilidade do Self</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[0].score }}" style="width: {{ (chart_points[0].score / 4 * 100)|int }}%">
+                            {{ chart_points[0].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Kohut descreve o self narcísico como vulnerável a feridas narcísicas. Sensibilidade extrema a críticas reflete self não consolidado.</p>
+                </div>
+            </div>
+            
+            <div class="dimension-card">
+                <div class="dimension-title">😨 Ansiedade de Fragmentação</div>
+                <div class="dimension-score">
+                    <div class="score-bar">
+                        <div class="score-fill level-{{ chart_points[9].score }}" style="width: {{ (chart_points[9].score / 4 * 100)|int }}%">
+                            {{ chart_points[9].score }}/4
+                        </div>
+                    </div>
+                </div>
+                <div class="clinical-interpretation">
+                    <h4>Interpretação Clínica:</h4>
+                    <p>Medo de desintegração do self quando objetos-self falham. Kohut relaciona ao trauma de falhas empáticas precoces dos cuidadores.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PATHOLOGICAL NARCISSISM INVENTORY (PNI) -->
+    <div class="pni-section">
+        <div class="section-header">
+            <div class="researcher-photo">PNI</div>
+            <div class="researcher-info">
+                <h2>Pathological Narcissism Inventory (PNI)</h2>
+                <p>Modelo Contemporâneo de Pincus & Lukowitsky - 7 Dimensões</p>
+            </div>
+        </div>
+        
+        <div class="pni-dimensions">
+            <div class="pni-card">
+                <h4>Raiva por Direito Negado</h4>
+                <div class="pni-score-circle">{{ chart_points[2].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Reações de raiva quando expectativas grandiosas não são atendidas</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Exploração</h4>
+                <div class="pni-score-circle">{{ chart_points[5].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Uso instrumental de outros para ganhos pessoais</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Fantasia Grandiosa</h4>
+                <div class="pni-score-circle">{{ chart_points[4].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Preocupação com fantasias de sucesso ilimitado</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Autoestima Contingente</h4>
+                <div class="pni-score-circle">{{ chart_points[8].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Dependência de validação externa para manter autoestima</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Ocultação do Self</h4>
+                <div class="pni-score-circle">{{ chart_points[7].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Evitação de exposição por medo de humilhação</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Desvalorização</h4>
+                <div class="pni-score-circle">{{ chart_points[1].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Tendência a desvalorizar outros quando ameaçado</p>
+            </div>
+            
+            <div class="pni-card">
+                <h4>Auto-sacrifício Narcísico</h4>
+                <div class="pni-score-circle">{{ chart_points[6].score }}</div>
+                <p style="font-size: 13px; color: #546e7a;">Comportamentos aparentemente altruístas para admiração</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECOMENDAÇÕES TERAPÊUTICAS -->
+    <div class="therapeutic-recommendations">
+        <h2>🎯 Recomendações Terapêuticas Baseadas em Evidências</h2>
+        
+        <div class="recommendations-grid">
+            <div class="recommendation-card">
+                <h3>📋 Abordagem Kernbergiana</h3>
+                <ul>
+                    <li>Psicoterapia Focada na Transferência (TFP)</li>
+                    <li>Interpretação sistemática de defesas primitivas</li>
+                    <li>Confrontação empática da grandiosidade</li>
+                    <li>Trabalho com agressão e inveja</li>
+                    <li>Estabelecimento de limites claros</li>
+                </ul>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3>💙 Abordagem Kohutiana</h3>
+                <ul>
+                    <li>Psicoterapia Psicanalítica do Self</li>
+                    <li>Empatia sustentada e espelhamento terapêutico</li>
+                    <li>Permitir idealização inicial do terapeuta</li>
+                    <li>Reparação de falhas empáticas precoces</li>
+                    <li>Fortalecimento gradual do self coeso</li>
+                </ul>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3>🧠 Terapia Baseada em Mentalização (MBT)</h3>
+                <ul>
+                    <li>Desenvolvimento da capacidade de mentalização</li>
+                    <li>Reconhecimento de estados mentais próprios e alheios</li>
+                    <li>Regulação emocional através da mentalização</li>
+                    <li>Redução de distorções interpessoais</li>
+                </ul>
+            </div>
+            
+            <div class="recommendation-card">
+                <h3>⚡ Intervenções Específicas</h3>
+                <ul>
+                    <li>Psicoeducação sobre narcisismo patológico</li>
+                    <li>Desenvolvimento de empatia genuína</li>
+                    <li>Trabalho com vergonha e vulnerabilidade</li>
+                    <li>Fortalecimento de relações autênticas</li>
+                    <li>Manejo de raiva narcísica</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÕES DE AÇÃO -->
+    <div style="margin-top: 40px; text-align: center;">
+        <button onclick="window.print()" class="button button--primary" style="margin-right: 15px;">
+            🖨️ Imprimir Relatório Completo
+        </button>
+        <a href="{{ url_for('admin.dashboard') }}" class="button button--ghost">
+            ← Voltar ao Dashboard
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.submissionChartData = {{ chart_points|tojson }};
+    </script>
+{% endblock %}

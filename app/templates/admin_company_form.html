@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Empresa | Admin{% endblock %}
+
+{% block content %}
+<section class="admin-shell">
+    <div class="admin-shell__header">
+        <div>
+            <span class="section-kicker">Cadastro</span>
+            <h1>Nova Empresa</h1>
+        </div>
+    </div>
+    <div class="form-panel" style="max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <form method="post" action="">
+            {{ form.hidden_tag() }}
+            <div class="field" style="margin-bottom: 1.5rem;">
+                {{ form.name.label(class="field__label") }}
+                {{ form.name(class="field__control") }}
+                {% for error in form.name.errors %}<span class="field-error" style="color:red; font-size: 0.8em;">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="field" style="margin-bottom: 1.5rem;">
+                {{ form.employee_count.label(class="field__label") }}
+                {{ form.employee_count(class="field__control", type="number") }}
+                {% for error in form.employee_count.errors %}<span class="field-error" style="color:red; font-size: 0.8em;">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="field" style="margin-bottom: 1.5rem;">
+                {{ form.hr_data.label(class="field__label") }}
+                {{ form.hr_data(class="field__control", rows="4") }}
+                {% for error in form.hr_data.errors %}<span class="field-error" style="color:red; font-size: 0.8em;">{{ error }}</span>{% endfor %}
+            </div>
+            <div class="form-actions" style="margin-top: 20px; display: flex; gap: 1rem;">
+                {{ form.submit(class="button button--primary") }}
+                <a href="{{ url_for('admin.dashboard') }}" class="button button--ghost">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="admin-shell" style="max-width: 1400px; margin: 0 auto;">
+    <div class="admin-shell__header" style="padding-bottom: 2rem; border-bottom: 1px solid var(--line);">
+        <div>
+            <span class="section-kicker">Painel Administrativo</span>
+            <h1 style="font-size: 2.5rem; margin-top: 0.5rem; color: var(--text);">Central Corporativa</h1>
+            <p style="color: var(--text-soft); font-size: 1.1rem;">Gerencie as empresas parceiras e acompanhe os relatórios consolidados do Estudo NR-1 em tempo real.</p>
+        </div>
+        <div class="admin-shell__actions">
+            <a href="{{ url_for('admin.company_new') }}" class="button button--primary">+ Nova Empresa</a>
+        </div>
+    </div>
+
+    <section style="margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+            <div>
+                <span class="section-kicker">Monitoramento Diário</span>
+                <h2 style="font-size: 1.8rem; margin: 0;">Lista de Clientes (B2B)</h2>
+            </div>
+            <strong style="color: var(--text-soft); font-size: 0.95rem; font-weight: 600;">{{ companies|length }} empresa(s) ativa(s)</strong>
+        </div>
+
+        <div class="modern-list-container" style="width: 100%; overflow: visible;">
+            <table class="data-table" style="background: transparent; border: none; box-shadow: none;">
+                <thead style="background: transparent;">
+                    <tr>
+                        <th style="background: transparent; border-bottom: 2px solid var(--line); padding-left: 0; color: var(--text-soft);">Nome da Empresa</th>
+                        <th style="background: transparent; border-bottom: 2px solid var(--line); color: var(--text-soft);">Colaboradores</th>
+                        <th style="background: transparent; border-bottom: 2px solid var(--line); color: var(--text-soft);">Cadastro Inicial</th>
+                        <th style="background: transparent; border-bottom: 2px solid var(--line); text-align: right; padding-right: 0; color: var(--text-soft);">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in companies %}
+                        <tr style="border-bottom: 1px solid var(--line); transition: background 0.2s ease;">
+                            <td style="padding-left: 0;">
+                                <strong style="font-size: 1.15rem; color: var(--text);">{{ company.name }}</strong>
+                            </td>
+                            <td>
+                                <span style="background: var(--line); color: var(--text); padding: 4px 12px; border-radius: 99px; font-weight: 600; font-size: 0.85rem;">
+                                    {{ company.employee_count }} previstos
+                                </span>
+                            </td>
+                            <td style="color: var(--text-soft);">{{ company.created_at.strftime("%d/%m/%Y") }}</td>
+                            <td style="text-align: right; padding-right: 0;">
+                                <div style="display: inline-flex; gap: 8px;">
+                                    <button type="button" class="button button--ghost button--compact" id="copyLinkBtn-{{ company.id }}" data-copy-text="{{ company.public_url }}" style="border: none; background: transparent; box-shadow: none; color: var(--accent);">
+                                        Copiar Link
+                                    </button>
+                                    <a class="button button--ghost button--compact" href="{{ url_for('admin.company_detail', company_id=company.id) }}">
+                                        Detalhes
+                                    </a>
+                                    <a class="button button--primary button--compact" href="{{ url_for('admin.company_nr1_report', company_id=company.id) }}">
+                                        Abrir Estudo NR-1
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="empty-state" style="padding: 4rem 0; text-align: center; color: var(--text-soft); font-size: 1.1rem;">
+                                Nenhuma empresa cadastrada. Clique em "+ Nova Empresa" acima para começar.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+
+<script>
+document.querySelectorAll('[id^="copyLinkBtn-"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.dataset.copyText);
+        let originalText = btn.innerText;
+        btn.innerText = "Copiado!";
+        setTimeout(() => { btn.innerText = originalText; }, 2000);
+    });
+});
+</script>
+{% endblock %}

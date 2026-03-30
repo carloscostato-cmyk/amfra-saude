@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Login | {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-panel">
+        <span class="section-kicker">Admin</span>
+        <h1>Acesso ao {{ app_name }}</h1>
+        <p class="lede">Entre para copiar o link do Questionário Pessoal e acompanhar os resultados administrativos.</p>
+
+        <form method="post" class="auth-form" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="field">
+                {{ form.username.label(class="field__label") }}
+                {{ form.username(class="field__control") }}
+                {% for error in form.username.errors %}
+                    <span class="field__error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                {{ form.password.label(class="field__label") }}
+                {{ form.password(class="field__control") }}
+                {% for error in form.password.errors %}
+                    <span class="field__error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            {{ form.submit(class="button button--primary button--large button--full") }}
+        </form>
+
+        <p class="auth-footnote">
+            A área Admin utiliza autenticação, token de acesso não enumerável e proteção contra CSRF.
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,171 @@
+:root {
+    --bg: #f8fafc !important;
+    --bg-strong: #f1f5f9 !important;
+    --surface: #ffffff !important;
+    --surface-strong: #ffffff !important;
+    --line: #e2e8f0 !important;
+    --text: #0f172a !important;
+    --text-soft: #64748b !important;
+    --accent: #2563eb !important;
+    --accent-2: #3b82f6 !important;
+    --healthy: #10b981 !important;
+    --attention: #f59e0b !important;
+    --alert: #f97316 !important;
+    --critical: #ef4444 !important;
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+    --shadow-strong: 0 10px 25px rgba(0, 0, 0, 0.06) !important;
+    --radius-lg: 16px !important;
+    --radius-md: 12px !important;
+    --radius-sm: 8px !important;
+    --font-display: 'Outfit', sans-serif !important;
+    --font-body: 'Inter', sans-serif !important;
+    --container: min(1500px, calc(100vw - 3rem)) !important;
+}
+
+body {
+    background: var(--bg) !important;
+    font-family: var(--font-body) !important;
+    color: var(--text) !important;
+}
+
+.site-backdrop {
+    display: none !important;
+}
+
+.site-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--line) !important;
+    backdrop-filter: none !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+}
+
+.brandmark__title {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+}
+
+.button {
+    border-radius: 8px !important;
+    font-family: var(--font-body) !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+.button--primary {
+    background: var(--accent) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+    color: #fff !important;
+}
+.button--primary:hover {
+    background: #1d4ed8 !important;
+}
+
+.button--ghost {
+    background: #ffffff !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+}
+.button--ghost:hover {
+    background: #f8fafc !important;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: var(--font-display) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    color: var(--text) !important;
+    line-height: 1.2 !important;
+}
+
+h1 {
+    font-size: clamp(1.8rem, 2.5vw, 2.2rem) !important;
+}
+
+h2 {
+    font-size: clamp(1.4rem, 2vw, 1.75rem) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+h3 {
+    font-size: 1.15rem !important;
+}
+
+.section-kicker {
+    font-family: var(--font-body) !important;
+    color: var(--accent) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+}
+
+.action-panel, .metric, .results-panel, .filter-panel, .form-panel {
+    background: #ffffff !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: var(--shadow-soft) !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+.metric__value {
+    color: var(--accent) !important;
+    font-weight: 700 !important;
+}
+
+.data-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.data-table th {
+    background: #f8fafc !important;
+    color: var(--text-soft) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    padding: 1rem 1.5rem !important;
+    border-bottom: 1px solid var(--line) !important;
+    border-top: 1px solid var(--line) !important;
+}
+
+.data-table td {
+    padding: 1.25rem 1.5rem !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--text) !important;
+    font-size: 0.95rem !important;
+}
+
+.data-table tr:hover td {
+    background: #f9fafb !important;
+}
+
+.classification-badge {
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+}
+
+.share-link-box {
+    background: #f8fafc !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text-soft) !important;
+    border-radius: 8px !important;
+    font-family: monospace !important;
+}
+
+.public-intro__surface {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+.public-intro__surface h1 {
+    color: #ffffff !important;
+}
+.public-intro__surface .section-kicker {
+    color: #3b82f6 !important;
+}
