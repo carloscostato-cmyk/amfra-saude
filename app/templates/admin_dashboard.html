@@ -49,7 +49,7 @@
                             <td style="text-align: right; padding-right: 0; white-space: nowrap;">
                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
                                     <button type="button" class="button button--ghost button--compact" 
-                                            onclick="copyLink('{{ url_for('public.questionnaire_by_token', token=company.token, _external=True) }}', this)"
+                                            onclick="copyLink('{{ url_for('public.questionnaire', company_token=company.token, _external=True) }}', this)"
                                             style="border-color: var(--line); color: var(--text-soft);">
                                         Copiar Link
                                     </button>
