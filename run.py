@@ -14,8 +14,9 @@ with app.app_context():
 
 
 if __name__ == "__main__":
+    target_port = int(os.getenv("PORT", os.getenv("APP_PORT", "5001")))
     app.run(
         host="0.0.0.0",
-        port=int(os.getenv("APP_PORT", "5001")),
+        port=target_port,
         debug=False,
     )
