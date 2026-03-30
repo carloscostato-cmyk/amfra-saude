@@ -1134,3 +1134,4 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table submissions ha
 [SQL: INSERT INTO submissions (employee_id, questionnaire_date, total_score, classification, interpretation, created_at) VALUES (?, ?, ?, ?, ?, ?)]
 [parameters: (1, '2026-03-30', 10, 'RELACIONAMENTO SAUDÁVEL', 'As respostas sugerem um vínculo com segurança emocional, respeito e abertura para diálogo. Mesmo em relações saudáveis, vale manter comunicação clara, limites consistentes e espaço para cuidado mútuo.', '2026-03-30 17:53:38.814442')]
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-30 19:55:07,313 [INFO] app: Usuário administrador semeado automaticamente.
