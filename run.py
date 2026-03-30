@@ -8,7 +8,11 @@ app = create_app()
 
 
 with app.app_context():
-    if app.config.get("AUTO_CREATE_DB"):
+    if app.config.get("AUTO_REPAIR_DB"):
+        app.logger.warning("AUTO_REPAIR_DB detectado. Recriando esquema do banco...")
+        db.drop_all()
+        db.create_all()
+    elif app.config.get("AUTO_CREATE_DB"):
         db.create_all()
     ensure_admin_user(app)
 
