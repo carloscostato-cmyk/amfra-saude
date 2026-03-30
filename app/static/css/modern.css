@@ -22,6 +22,10 @@
     --container: min(1500px, calc(100vw - 3rem)) !important;
 }
 
+.text-critical {
+    color: var(--critical) !important;
+}
+
 body {
     background: var(--bg) !important;
     font-family: var(--font-body) !important;
@@ -272,4 +276,13 @@ h3 {
 @keyframes blink {
     from { opacity: 1; }
     to { opacity: 0.4; }
+}
+
+.table-container {
+    padding: 0 1.5rem 1.5rem;
+    overflow-x: visible !important;
+}
+
+.data-table {
+    table-layout: fixed !important;
 }

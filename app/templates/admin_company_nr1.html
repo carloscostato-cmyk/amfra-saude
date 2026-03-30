@@ -35,7 +35,7 @@
         </article>
         <article class="metric">
             <span class="metric__label">Riscos Críticos</span>
-            <strong class="metric__value" style="color: {% if report.needs_immediate_action %}#dc3545{% else %}inherit{% endif %}">{{ report.critical_percentage }}%</strong>
+            <strong class="metric__value {% if report.needs_immediate_action %}text-critical{% endif %}">{{ report.critical_percentage }}%</strong>
         </article>
     </section>
 
@@ -75,21 +75,25 @@
                     <h2>Tópicos de Maior Risco</h2>
                 </div>
             </div>
-            <div class="table-wrap">
+            <div class="table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Tópico</th>
-                            <th>Acompanhamento Clínico</th>
-                            <th>Média Risco (1 a 4)</th>
+                            <th style="width: 15%;">Tópico</th>
+                            <th style="width: 70%;">Acompanhamento Clínico</th>
+                            <th style="width: 15%; text-align: center;">Média (1-4)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for topic in report.top_risk_topics %}
                         <tr>
-                            <td><strong>{{ topic.topic_name }}</strong></td>
-                            <td style="font-size:0.9em; max-width: 400px; white-space: normal;">{{ topic.question_text }}</td>
-                            <td><strong style="color: #dc3545; font-size:1.2em;">{{ topic.average_score }}</strong></td>
+                            <td style="font-weight: 700;">{{ topic.topic_name }}</td>
+                            <td style="font-size: 0.9rem; line-height: 1.4; color: var(--text-soft); white-space: normal;">
+                                {{ topic.question_text }}
+                            </td>
+                            <td style="text-align: center;">
+                                <strong style="color: var(--critical); font-size: 1.25rem;">{{ topic.average_score }}</strong>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
