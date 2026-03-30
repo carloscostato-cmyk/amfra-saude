@@ -97,6 +97,14 @@ def _register_cli_commands(app: Flask) -> None:
         db.create_all()
         click.echo("Banco inicializado com sucesso.")
 
+    @app.cli.command("repair-db")
+    def repair_db_command():
+        """Força o recarregamento do esquema do banco (DROP and CREATE)."""
+        if click.confirm("Isso apagará TODOS os dados. Tem certeza?", abort=True):
+            db.drop_all()
+            db.create_all()
+            click.echo("Esquema do banco recriado com sucesso.")
+
     @app.cli.command("seed-admin")
     @click.option("--username", prompt=True, help="Nome de usuário do administrador.")
     @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True, help="Senha do administrador.")

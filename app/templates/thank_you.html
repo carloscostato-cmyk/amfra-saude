@@ -3,23 +3,35 @@
 {% block title %}Questionário recebido | {{ app_name }}{% endblock %}
 
 {% block content %}
-<section class="thank-you-panel">
-    <span class="section-kicker">Envio concluído</span>
-    <h1>Muito obrigado pelo preenchimento.</h1>
-    <p class="lede">
-        Seu Questionário Pessoal foi registrado com sucesso e encaminhado ao fluxo administrativo protegido.
-    </p>
-
-    <div class="thank-you-panel__meta">
-        <div>
-            <strong>Status</strong>
-            <span>Recebido e Processado</span>
+<section class="thank-you-stage">
+    <div class="thank-you-card">
+        <div class="thank-you-card__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="ai-burst">
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                <circle cx="12" cy="12" r="4"/>
+            </svg>
         </div>
-        <div>
-            <strong>Próximo passo</strong>
-            <span>O material já está disponível para análise profissional.</span>
+        
+        <span class="section-kicker">Processamento Concluído</span>
+        <h1>Muito obrigado pelo preenchimento!</h1>
+        <p class="lede">
+            Seu questionário foi enviado e processado com sucesso.
+        </p>
+
+        <div class="agent-grid">
+            <div class="agent-item">
+                <span class="agent-item__count">6</span>
+                <span class="agent-item__label">Agentes Clínicos analisando seu perfil</span>
+            </div>
+        </div>
+
+        <div class="thank-you-card__footer">
+            <p>Seus dados estão protegidos sob sigilo absoluto e criptografia de ponta.</p>
+            <div class="thank-you-status">
+                <span class="status-dot"></span>
+                <span>Análise em tempo real finalizada</span>
+            </div>
         </div>
     </div>
-
 </section>
 {% endblock %}
