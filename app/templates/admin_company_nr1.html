@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Estudo NR-1 - {{ company.name }} | Admin{% endblock %}
+{% block title %}Estudo NR-1 HSE-IT - {{ company.name }} | Admin{% endblock %}
 
 {% block content %}
 <section class="admin-shell">
     <div class="admin-shell__header">
         <div>
-            <span class="section-kicker">Saúde Organizacional e Riscos Psicossociais</span>
+            <span class="section-kicker">Saúde Organizacional e Riscos Psicossociais — HSE-IT</span>
             <h1>Estudo NR-1: {{ company.name }}</h1>
-            <p>Análise agregada de riscos psicossociais e segurança emocional do ambiente corporativo.</p>
+            <p>Análise agregada por dimensão — Health Safety Executive Indicator Tool (35 perguntas, Escala Likert 1–5).</p>
         </div>
         <div class="admin-shell__actions" style="margin-top: 15px;">
             <button onclick="window.print()" class="button button--primary">Imprimir Relatório</button>
@@ -30,21 +30,86 @@
             <strong class="metric__value">{{ report.participation_rate }}%</strong>
         </article>
         <article class="metric">
-            <span class="metric__label">Média Global (Max 40)</span>
+            <span class="metric__label">Média Global (1–5)</span>
             <strong class="metric__value">{{ report.company_average_score }}</strong>
         </article>
         <article class="metric">
-            <span class="metric__label">Riscos Críticos</span>
+            <span class="metric__label">Nível Global</span>
+            <strong class="metric__value {% if report.global_band == 'BAIXO' %}text-critical{% elif report.global_band == 'ALTO' %}text-healthy{% endif %}">
+                {{ report.global_band }}
+            </strong>
+        </article>
+        <article class="metric">
+            <span class="metric__label">% Avaliação BAIXO</span>
             <strong class="metric__value {% if report.needs_immediate_action %}text-critical{% endif %}">{{ report.critical_percentage }}%</strong>
         </article>
     </section>
 
+    {# ── Legenda ── #}
+    <section style="margin: 20px 0; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <strong style="display: block; margin-bottom: 8px; color: var(--text-soft); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">Legenda — Média Aritmética (Escala Likert)</strong>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.9rem;">
+            <span><strong style="color:#dc3545;">BAIXO</strong> → 1,00 a 2,29</span>
+            <span><strong style="color:#d97706;">MÉDIO</strong> → 2,30 a 3,69</span>
+            <span><strong style="color:#059669;">ALTO</strong>  → 3,70 a 5,00</span>
+        </div>
+    </section>
+
+    {# ── Resultados por Dimensão ── #}
+    <section class="dashboard-grid" style="margin-top:20px;">
+        <section class="results-panel" style="width: 100%;">
+            <div class="results-panel__header">
+                <div>
+                    <span class="section-kicker">HSE-IT</span>
+                    <h2>Resultados por Dimensão</h2>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Dimensão Avaliada</th>
+                            <th style="width: 40%;">Perguntas</th>
+                            <th style="width: 15%; text-align: center;">Média</th>
+                            <th style="width: 15%; text-align: center;">Classificação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dim in report.dimension_analysis %}
+                        <tr>
+                            <td style="font-weight: 700;">{{ dim.dimension_name }}</td>
+                            <td style="font-size: 0.85rem; color: var(--text-soft);">
+                                {{ dim.question_numbers | join(', ') }}
+                            </td>
+                            <td style="text-align: center;">
+                                <strong style="font-size: 1.2rem;">{{ dim.average }}</strong>
+                            </td>
+                            <td style="text-align: center;">
+                                {% if dim.band == 'BAIXO' %}
+                                    <span style="background:#f8d7da; color:#721c24; border: 1px solid #f5c6cb; border-radius: 99px; padding: 3px 10px; font-weight: 700; font-size: 0.82rem;">BAIXO</span>
+                                {% elif dim.band == 'MÉDIO' %}
+                                    <span style="background:#fff3cd; color:#856404; border: 1px solid #ffeeba; border-radius: 99px; padding: 3px 10px; font-weight: 700; font-size: 0.82rem;">MÉDIO</span>
+                                {% elif dim.band == 'ALTO' %}
+                                    <span style="background:#d4edda; color:#155724; border: 1px solid #c3e6cb; border-radius: 99px; padding: 3px 10px; font-weight: 700; font-size: 0.82rem;">ALTO</span>
+                                {% else %}
+                                    <span style="color: var(--text-soft);">{{ dim.band }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+
+    {# ── Distribuição Individual ── #}
     <section class="dashboard-grid" style="margin-top:20px;">
         <section class="results-panel" style="width: 100%;">
             <div class="results-panel__header">
                 <div>
                     <span class="section-kicker">Distribuição</span>
-                    <h2>Níveis de Risco</h2>
+                    <h2>Níveis de Risco por Colaborador</h2>
                 </div>
             </div>
             <div style="padding: 20px;">
@@ -57,36 +122,39 @@
                     {% endfor %}
                 </ul>
             </div>
-            
+
             {% if report.needs_immediate_action %}
             <div style="margin: 20px; padding: 20px; background: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; border-radius: 4px;">
-                <h3 style="margin-top:0;">⚠ Alerta do Sistema NR-1: Ação Imediata Recomendada</h3>
-                <p style="margin-bottom:0;">Foi detectada uma alta densidade de resultados Críticos (acima de 15% de casos graves). Recomenda-se programa intensivo de intervenção organizacional, escuta ativa acompanhada e/ou assessoria técnica psiquiátrica HR.</p>
+                <h3 style="margin-top:0;">⚠ Alerta NR-1: Ação Imediata Recomendada</h3>
+                <p style="margin-bottom:0;">Foi detectada alta concentração de avaliações com nível BAIXO (acima de 15%). Recomenda-se programa intensivo de intervenção organizacional e escuta ativa acompanhada.</p>
             </div>
             {% endif %}
         </section>
     </section>
 
+    {# ── Top 3 Questões de Maior Risco ── #}
     <section class="dashboard-grid" style="margin-top:20px;">
         <section class="results-panel" style="width: 100%;">
             <div class="results-panel__header">
                 <div>
                     <span class="section-kicker">Ranking</span>
-                    <h2>Tópicos de Maior Risco</h2>
+                    <h2>Questões com Maior Exposição ao Risco (menor média)</h2>
                 </div>
             </div>
             <div class="table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th style="width: 15%;">Tópico</th>
-                            <th style="width: 70%;">Acompanhamento Clínico</th>
-                            <th style="width: 15%; text-align: center;">Média (1-4)</th>
+                            <th style="width: 8%;">Nº</th>
+                            <th style="width: 20%;">Dimensão</th>
+                            <th style="width: 57%;">Texto da Questão</th>
+                            <th style="width: 15%; text-align: center;">Média (1–5)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for topic in report.top_risk_topics %}
                         <tr>
+                            <td style="font-weight: 700; color: var(--text-soft);">{{ "%02d"|format(topic.question_number) }}</td>
                             <td style="font-weight: 700;">{{ topic.topic_name }}</td>
                             <td style="font-size: 0.9rem; line-height: 1.4; color: var(--text-soft); white-space: normal;">
                                 {{ topic.question_text }}

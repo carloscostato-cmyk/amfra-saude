@@ -1,65 +1,96 @@
-from dataclasses import dataclass
+"""
+Scoring HSE-IT (Health Safety Executive Indicator Tool)
+========================================================
+Escala Likert: 1 (Nunca) a 5 (Sempre)
+
+Regra de interpretação por DIMENSÃO (média aritmética das respostas):
+  DE 1,00 a 2,29 → BAIXO
+  DE 2,30 a 3,69 → MÉDIO
+  DE 3,70 a 5,00 → ALTO
+
+A classificação GLOBAL também segue a média aritmética das 35 respostas
+com os mesmos limites acima.
+"""
+
+from dataclasses import dataclass, field as dc_field
+from statistics import mean
+
+from app.questionnaire import DIMENSIONS
 
 
-SCORE_MAP = {"A": 1, "B": 2, "C": 3, "D": 4}
+# ─── Faixas de interpretação (Anexo 2) ──────────────────────────────────────
+BAND_LOW    = (1.00, 2.29)
+BAND_MEDIUM = (2.30, 3.69)
+BAND_HIGH   = (3.70, 5.00)
 
-CLASSIFICATION_RULES = [
-    (10, 15, "RELACIONAMENTO SAUDÁVEL"),
-    (16, 25, "ATENÇÃO: PADRÕES PREOCUPANTES"),
-    (26, 35, "ALERTA: SINAIS NARCÍSICOS SIGNIFICATIVOS"),
-    (36, 40, "CRÍTICO: ABUSO NARCÍSICO — INTERVENÇÃO NECESSÁRIA"),
-]
 
+def _band_label(average: float) -> str:
+    if average <= BAND_LOW[1]:
+        return "BAIXO"
+    if average <= BAND_MEDIUM[1]:
+        return "MÉDIO"
+    return "ALTO"
+
+
+# ─── Interpretações gerais ───────────────────────────────────────────────────
 INTERPRETATIONS = {
-    "RELACIONAMENTO SAUDÁVEL": (
-        "As respostas sugerem um vínculo com segurança emocional, respeito e abertura para diálogo. "
-        "Mesmo em relações saudáveis, vale manter comunicação clara, limites consistentes e espaço para cuidado mútuo."
+    "BAIXO": (
+        "A média geral indica baixa percepção de bem-estar no trabalho. "
+        "Os colaboradores demonstram sinais significativos de insatisfação e exposição "
+        "a riscos psicossociais relevantes. Recomenda-se intervenção prioritária nas "
+        "dimensões com pior desempenho."
     ),
-    "ATENÇÃO: PADRÕES PREOCUPANTES": (
-        "Há sinais que merecem observação cuidadosa. O resultado aponta possíveis desgastes emocionais, "
-        "situações de invalidação ou desequilíbrio relacional que podem se intensificar sem intervenção consciente."
+    "MÉDIO": (
+        "A média geral aponta para um nível moderado de percepção de bem-estar. "
+        "Existem aspectos positivos, mas também dimensões que merecem atenção e melhoria "
+        "para promover um ambiente de trabalho mais saudável e seguro emocionalmente."
     ),
-    "ALERTA: SINAIS NARCÍSICOS SIGNIFICATIVOS": (
-        "A pontuação indica padrões narcísicos relevantes com impacto emocional importante. "
-        "É recomendável fortalecer limites, rede de apoio e considerar orientação profissional especializada."
-    ),
-    "CRÍTICO: ABUSO NARCÍSICO — INTERVENÇÃO NECESSÁRIA": (
-        "O resultado é compatível com um cenário de abuso narcísico intenso e sofrimento elevado. "
-        "A situação pede atenção clínica, rede de apoio confiável e avaliação cuidadosa de segurança emocional e prática."
+    "ALTO": (
+        "A média geral indica boa percepção de bem-estar no trabalho. "
+        "O ambiente apresenta fatores protetores consolidados. Recomenda-se manter as "
+        "práticas atuais e monitorar continuamente as dimensões de menor pontuação."
     ),
 }
+
+# As classificações para compatibilidade com o código legado
+CLASSIFICATION_RULES = [
+    (1.00, 2.29, "BAIXO"),
+    (2.30, 3.69, "MÉDIO"),
+    (3.70, 5.00, "ALTO"),
+]
+
+
+@dataclass(frozen=True)
+class DimensionResult:
+    name: str
+    question_numbers: list
+    average: float
+    band: str
 
 
 @dataclass(frozen=True)
 class EvaluationResult:
-    answers: list[dict]
-    total_score: int
-    classification: str
+    answers: list
+    total_score: int          # soma bruta (mantida por compatibilidade com DB)
+    classification: str       # label global: BAIXO | MÉDIO | ALTO
     interpretation: str
+    global_average: float     # média aritmética global (1–5)
+    dimension_results: list   # lista de DimensionResult
 
 
 def score_for_option(option: str) -> int:
-    normalized_option = (option or "").strip().upper()
-    if normalized_option not in SCORE_MAP:
-        raise ValueError("Opção de resposta inválida.")
-    return SCORE_MAP[normalized_option]
+    """Converte a resposta Likert '1'–'5' em inteiro."""
+    try:
+        val = int(option)
+        if 1 <= val <= 5:
+            return val
+    except (TypeError, ValueError):
+        pass
+    raise ValueError(f"Opção inválida: '{option}'. Esperado '1' a '5'.")
 
 
-def calculate_total_score(options: list[str]) -> int:
-    return sum(score_for_option(option) for option in options)
-
-
-def classify_score(total_score: int) -> str:
-    for minimum, maximum, label in CLASSIFICATION_RULES:
-        if minimum <= total_score <= maximum:
-            return label
-    raise ValueError("Pontuação total fora da faixa esperada para 10 perguntas.")
-
-
-def interpretation_for_classification(classification: str) -> str:
-    if classification not in INTERPRETATIONS:
-        raise ValueError("Classificação inválida para interpretação.")
-    return INTERPRETATIONS[classification]
+def classify_score(average: float) -> str:
+    return _band_label(average)
 
 
 def evaluate_submission(answer_payloads: list[dict]) -> EvaluationResult:
@@ -68,13 +99,38 @@ def evaluate_submission(answer_payloads: list[dict]) -> EvaluationResult:
         score = score_for_option(answer["selected_option"])
         scored_answers.append({**answer, "score": score})
 
-    total_score = calculate_total_score([answer["selected_option"] for answer in scored_answers])
-    classification = classify_score(total_score)
-    interpretation = interpretation_for_classification(classification)
+    scores_by_question = {a["question_number"]: a["score"] for a in scored_answers}
+    total_score = sum(a["score"] for a in scored_answers)
+    global_average = total_score / len(scored_answers) if scored_answers else 0.0
+    classification = classify_score(global_average)
+    interpretation = INTERPRETATIONS[classification]
+
+    # Calcular médias por dimensão
+    dimension_results = []
+    for dim_name, q_nums in DIMENSIONS.items():
+        dim_scores = [scores_by_question[n] for n in q_nums if n in scores_by_question]
+        if dim_scores:
+            avg = round(mean(dim_scores), 2)
+            band = _band_label(avg)
+        else:
+            avg = 0.0
+            band = "N/D"
+        dimension_results.append(DimensionResult(
+            name=dim_name,
+            question_numbers=q_nums,
+            average=avg,
+            band=band,
+        ))
 
     return EvaluationResult(
         answers=scored_answers,
         total_score=total_score,
         classification=classification,
         interpretation=interpretation,
+        global_average=round(global_average, 2),
+        dimension_results=dimension_results,
     )
+
+
+def interpretation_for_classification(classification: str) -> str:
+    return INTERPRETATIONS.get(classification, "")

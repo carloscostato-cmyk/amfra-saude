@@ -1,4 +1,4 @@
-# ✅ SISTEMA DEIAPSIC - LIMPO E PRONTO
+# ✅ SISTEMA AMFRA - LIMPO E PRONTO
 
 ## 🎉 O QUE FOI FEITO
 
@@ -51,7 +51,7 @@
 │   │   ├── main.js
 │   │   └── submission_detail.js
 │   └── 📁 img/
-│       └── logo-deiapsic.svg
+│       └── logo-AMFRA.svg
 └── 📁 templates/
     ├── base.html
     ├── admin_dashboard.html
@@ -82,7 +82,7 @@
 - `CONFIGURACAO_PRODUCAO.md` - Guia de produção
 - `IMPORTANTE_LEIA_ANTES_DE_USAR.md` - Avisos importantes
 - `INSTRUCOES_COPIAR_PENDRIVE.md` - Como copiar para pendrive
-- `proposta_deiapsic.html` - Proposta comercial
+- `proposta_AMFRA.html` - Proposta comercial
 
 ### Banco de Dados
 ```

@@ -30,7 +30,7 @@ Você precisa saber qual é o endereço público/acessível do servidor:
 
 **Opção A - Servidor na Internet (com domínio):**
 ```
-https://deiapsic.com.br
+https://AMFRA.com.br
 ```
 
 **Opção B - Servidor na rede local da clínica:**
@@ -52,7 +52,7 @@ Abra o arquivo `.env` e altere esta linha:
 APP_BASE_URL=http://127.0.0.1:5000
 
 # Depois (CORRETO - use SEU endereço)
-APP_BASE_URL=https://deiapsic.com.br
+APP_BASE_URL=https://AMFRA.com.br
 ```
 
 ### Passo 3: Reinicie o servidor
@@ -111,8 +111,8 @@ Para mais detalhes, leia: **CONFIGURACAO_PRODUCAO.md**
 4. Use: `http://192.168.1.100:5001`
 
 **Se o servidor está na internet:**
-1. Você deve ter um domínio registrado (exemplo: deiapsic.com.br)
-2. Use: `https://deiapsic.com.br`
+1. Você deve ter um domínio registrado (exemplo: AMFRA.com.br)
+2. Use: `https://AMFRA.com.br`
 
 ### Problema: "Pacientes não conseguem acessar o link"
 
@@ -149,6 +149,6 @@ Antes de usar em produção:
 
 ---
 
-**Criado para**: Deiapsic - Sistema de Avaliação Clínica  
+**Criado para**: AMFRA - Sistema de Avaliação Clínica  
 **Versão**: 1.0  
 **Data**: 2024

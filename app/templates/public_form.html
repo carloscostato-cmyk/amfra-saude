@@ -16,11 +16,11 @@
             <dl class="intro-details">
                 <div>
                     <dt>Tempo estimado</dt>
-                    <dd>3 a 5 minutos</dd>
+                    <dd>8 a 12 minutos</dd>
                 </div>
                 <div>
                     <dt>Estrutura</dt>
-                    <dd>10 perguntas, 4 alternativas cada</dd>
+                    <dd>35 perguntas, escala de 1 a 5 (Nunca → Sempre)</dd>
                 </div>
                 <div>
                     <dt>Privacidade (LGPD)</dt>
@@ -82,13 +82,13 @@
                             <span>{{ question.text }}</span>
                         </legend>
 
-                        <div class="answer-grid">
+                        <div class="answer-grid answer-grid--likert">
                             {% for subfield in field %}
-                                <label class="choice-card" for="{{ subfield.id }}">
+                                <label class="likert-card" for="{{ subfield.id }}">
                                     {{ subfield(class="choice-card__input") }}
-                                    <span class="choice-card__body">
-                                        <span class="choice-card__letter">{{ subfield._value() }}</span>
-                                        <span class="choice-card__text">{{ subfield.label.text }}</span>
+                                    <span class="likert-card__body">
+                                        <span class="likert-card__number">{{ subfield._value() }}</span>
+                                        <span class="likert-card__label">{{ subfield.label.text.split(' – ')[1] if ' – ' in subfield.label.text else subfield.label.text }}</span>
                                     </span>
                                 </label>
                             {% endfor %}

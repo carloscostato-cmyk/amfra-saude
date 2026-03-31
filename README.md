@@ -1,4 +1,4 @@
-# APP Deiapsic
+# APP AMFRA
 
 Sistema web completo para transformar um questionário clínico em uma aplicação real com:
 

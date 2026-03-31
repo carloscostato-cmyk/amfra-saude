@@ -1,4 +1,4 @@
-# 🚀 Configuração para Produção - Deiapsic
+# 🚀 Configuração para Produção - AMFRA
 
 ## ⚠️ IMPORTANTE: Configuração de URLs
 
@@ -14,9 +14,9 @@ O sistema usa a variável `APP_BASE_URL` para gerar links que serão enviados ao
 
 Você precisa saber qual é o endereço público do seu servidor. Exemplos:
 
-- **Com domínio**: `https://deiapsic.com.br`
+- **Com domínio**: `https://AMFRA.com.br`
 - **Com IP público**: `http://192.168.1.100:5001`
-- **Com subdomínio**: `https://app.deiapsic.com.br`
+- **Com subdomínio**: `https://app.AMFRA.com.br`
 
 ### 2. Edite o arquivo `.env`
 
@@ -30,7 +30,7 @@ PREFERRED_URL_SCHEME=http
 SESSION_COOKIE_SECURE=false
 
 # ✅ CORRETO (produção com domínio e HTTPS)
-APP_BASE_URL=https://deiapsic.com.br
+APP_BASE_URL=https://AMFRA.com.br
 APP_PORT=5001
 PREFERRED_URL_SCHEME=https
 SESSION_COOKIE_SECURE=true
@@ -69,7 +69,7 @@ Para produção, use PostgreSQL:
 DATABASE_URL=
 
 # ✅ CORRETO (PostgreSQL)
-DATABASE_URL=postgresql+psycopg://usuario:senha@localhost:5432/deiapsic_db
+DATABASE_URL=postgresql+psycopg://usuario:senha@localhost:5432/AMFRA_db
 ```
 
 ### 5. Configure o WhatsApp (Opcional)
@@ -92,7 +92,7 @@ WHATSAPP_DESTINATION_NUMBER=5511985879829
 1. Faça login no admin
 2. Na dashboard, copie o "Link para paciente"
 3. O link deve começar com seu domínio/IP público:
-   - ✅ `https://deiapsic.com.br/questionario-pessoal`
+   - ✅ `https://AMFRA.com.br/questionario-pessoal`
    - ✅ `http://192.168.1.100:5001/questionario-pessoal`
    - ❌ `http://127.0.0.1:5000/questionario-pessoal`
 
@@ -191,12 +191,12 @@ Se precisar de ajuda, verifique:
 SECRET_KEY=gere-uma-chave-aleatoria-forte-aqui-32-caracteres-minimo
 
 # URLs e Servidor
-APP_BASE_URL=https://deiapsic.com.br
+APP_BASE_URL=https://AMFRA.com.br
 APP_PORT=5001
 PREFERRED_URL_SCHEME=https
 
 # Banco de Dados
-DATABASE_URL=postgresql+psycopg://deiapsic_user:senha_forte@localhost:5432/deiapsic_db
+DATABASE_URL=postgresql+psycopg://AMFRA_user:senha_forte@localhost:5432/AMFRA_db
 
 # Segurança de Sessão
 SESSION_COOKIE_SECURE=true

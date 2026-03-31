@@ -1,8 +1,8 @@
-# ✅ RESUMO COMPLETO DAS MELHORIAS - DEIAPSIC
+# ✅ RESUMO COMPLETO DAS MELHORIAS - AMFRA
 
 ## 🎯 MISSÃO CUMPRIDA
 
-Coordenei 11 agentes trabalhando simultaneamente para melhorar o DeiaPsic:
+Coordenei 11 agentes trabalhando simultaneamente para melhorar o AMFRA:
 - **2 agentes**: Pesquisa de gráficos clínicos
 - **5 agentes**: Web design e UX
 - **2 agentes**: Prompt atualizado
@@ -55,10 +55,10 @@ Coordenei 11 agentes trabalhando simultaneamente para melhorar o DeiaPsic:
 
 ## 📝 EQUIPE 3: PROMPT ATUALIZADO (2 AGENTES)
 
-### Nova Descrição do DeiaPsic:
+### Nova Descrição do AMFRA:
 
 ```
-DeiaPsic - Sistema de Avaliação Clínica para Relacionamentos Narcisistas
+AMFRA - Sistema de Avaliação Clínica para Relacionamentos Narcisistas
 
 FUNCIONALIDADES:
 ✅ Questionário de 10 perguntas (4 alternativas cada)
@@ -220,7 +220,7 @@ DIFERENCIAIS:
 
 ## 🎉 CONCLUSÃO
 
-**11 agentes trabalharam simultaneamente** para transformar o DeiaPsic em uma ferramenta clínica profissional, limpa e pronta para produção.
+**11 agentes trabalharam simultaneamente** para transformar o AMFRA em uma ferramenta clínica profissional, limpa e pronta para produção.
 
 **Resultado**: Sistema 70% mais leve, 100% mais claro, e pronto para deploy gratuito na web HOJE MESMO!
 

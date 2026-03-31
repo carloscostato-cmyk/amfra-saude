@@ -130,10 +130,10 @@
 
 ## 📝 EQUIPE 4: PROMPT ATUALIZADO DA FERRAMENTA
 
-### Descrição Atualizada do DeiaPsic:
+### Descrição Atualizada do AMFRA:
 
 ```
-DeiaPsic - Sistema de Avaliação Clínica para Relacionamentos Narcisistas
+AMFRA - Sistema de Avaliação Clínica para Relacionamentos Narcisistas
 
 DESCRIÇÃO:
 Plataforma web para avaliação psicológica de pacientes em relacionamentos 

@@ -1,10 +1,10 @@
-# 🎯 APRESENTAÇÃO DEIAPSIC - 5 SLIDES
+# 🎯 APRESENTAÇÃO AMFRA - 5 SLIDES
 
 ## SLIDE 1: CAPA
 ```
 ┌─────────────────────────────────────────┐
 │                                         │
-│           🌟 DeiaPsic                   │
+│           🌟 AMFRA                   │
 │                                         │
 │   Sistema Profissional de Avaliação    │
 │   Clínica para Relacionamentos          │
@@ -38,7 +38,7 @@
 
 ---
 
-## SLIDE 3: A SOLUÇÃO - DEIAPSIC
+## SLIDE 3: A SOLUÇÃO - AMFRA
 ```
 ┌─────────────────────────────────────────┐
 │  ✅ SISTEMA COMPLETO                    │
@@ -114,7 +114,7 @@
 │                                         │
 │  📊 COMPARAÇÃO:                         │
 │  Mercado: R$ 15k-30k + R$ 200-500/mês  │
-│  DeiaPsic: R$ 8.500 (pagamento único)  │
+│  AMFRA: R$ 8.500 (pagamento único)  │
 │                                         │
 │  ⏰ ENTREGA: 5 dias úteis               │
 │                                         │
@@ -127,7 +127,7 @@
 
 ## 📞 CONTATO
 
-**Email:** contato@deiapsic.com.br  
+**Email:** contato@AMFRA.com.br  
 **WhatsApp:** (11) 99999-9999  
 **Proposta válida:** 30 dias
 

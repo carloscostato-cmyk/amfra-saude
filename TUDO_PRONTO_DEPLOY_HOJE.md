@@ -1,4 +1,4 @@
-# 🎉 DEIAPSIC - TUDO PRONTO PARA DEPLOY HOJE!
+# 🎉 AMFRA - TUDO PRONTO PARA DEPLOY HOJE!
 
 ## ✅ STATUS: 100% COMPLETO
 
@@ -13,11 +13,11 @@
 1. **Criar conta**: https://railway.com (login com GitHub)
 2. **Criar repositório GitHub**: 
    - Vá em github.com
-   - Crie repositório "deiapsic"
+   - Crie repositório "AMFRA"
    - Suba o código (comandos abaixo)
 3. **Deploy no Railway**:
    - New Project → Deploy from GitHub
-   - Selecione "deiapsic"
+   - Selecione "AMFRA"
    - Clique "Deploy"
 4. **Configurar variáveis**:
    - Adicione as variáveis do `.env`
@@ -29,8 +29,8 @@
 ```bash
 git init
 git add .
-git commit -m "DeiaPsic pronto para produção"
-git remote add origin https://github.com/SEU_USUARIO/deiapsic.git
+git commit -m "AMFRA pronto para produção"
+git remote add origin https://github.com/SEU_USUARIO/AMFRA.git
 git push -u origin main
 ```
 

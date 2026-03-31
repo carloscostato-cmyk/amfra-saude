@@ -17,7 +17,7 @@ Railway é uma plataforma de hospedagem que permite fazer deploy de aplicações
 
 1. Conta no GitHub (gratuita)
 2. Conta no Railway.com (gratuita)
-3. Código do DeiaPsic
+3. Código do AMFRA
 
 ---
 
@@ -68,13 +68,13 @@ git init
 git add .
 
 # Fazer commit
-git commit -m "Deploy DeiaPsic para Railway"
+git commit -m "Deploy AMFRA para Railway"
 
 # Criar repositório no GitHub
-# Vá em github.com e crie um novo repositório chamado "deiapsic"
+# Vá em github.com e crie um novo repositório chamado "AMFRA"
 
 # Conectar ao repositório remoto
-git remote add origin https://github.com/SEU_USUARIO/deiapsic.git
+git remote add origin https://github.com/SEU_USUARIO/AMFRA.git
 
 # Enviar código
 git push -u origin main
@@ -84,7 +84,7 @@ git push -u origin main
 
 1. No Railway, clique em "New Project"
 2. Selecione "Deploy from GitHub repo"
-3. Escolha o repositório "deiapsic"
+3. Escolha o repositório "AMFRA"
 4. Railway detecta automaticamente que é Flask
 5. Clique em "Deploy"
 
@@ -107,7 +107,7 @@ WHATSAPP_ENABLED=false
 
 1. No Railway, vá em "Settings"
 2. Clique em "Generate Domain"
-3. Sua URL será algo como: `deiapsic-production.up.railway.app`
+3. Sua URL será algo como: `AMFRA-production.up.railway.app`
 
 ---
 
@@ -197,4 +197,4 @@ No Railway, clique em "Settings" → "Restart"
 
 ---
 
-**🎉 Parabéns! Seu DeiaPsic está online e acessível para qualquer pessoa na internet!**
+**🎉 Parabéns! Seu AMFRA está online e acessível para qualquer pessoa na internet!**

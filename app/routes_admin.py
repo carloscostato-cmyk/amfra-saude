@@ -18,23 +18,26 @@ from .services.links import build_public_questionnaire_url
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 QUESTION_TOPICS = {
-    1: "Estado emocional",
-    2: "Responsabilização",
-    3: "Críticas",
-    4: "Empatia",
-    5: "Reciprocidade",
-    6: "Isolamento",
-    7: "Comunicação",
-    8: "Confusão mental",
-    9: "Autoestima",
-    10: "Medo da reação",
+    1: "Cargo",           2: "Controle",          3: "Demandas",
+    4: "Cargo",           5: "Relacionamentos",    6: "Demandas",
+    7: "Apoio dos Colegas", 8: "Apoio da Chefia",  9: "Demandas",
+    10: "Controle",       11: "Cargo",            12: "Demandas",
+    13: "Cargo",          14: "Relacionamentos",   15: "Controle",
+    16: "Demandas",       17: "Cargo",            18: "Demandas",
+    19: "Controle",       20: "Demandas",          21: "Relacionamentos",
+    22: "Demandas",       23: "Apoio da Chefia",   24: "Apoio dos Colegas",
+    25: "Controle",       26: "Comunicação e Mudanças", 27: "Apoio dos Colegas",
+    28: "Comunicação e Mudanças", 29: "Apoio da Chefia", 30: "Controle",
+    31: "Apoio dos Colegas", 32: "Comunicação e Mudanças", 33: "Apoio da Chefia",
+    34: "Relacionamentos", 35: "Apoio da Chefia",
 }
 
 SCORE_INTENSITY_LABELS = {
-    1: "Base estável",
-    2: "Observação",
-    3: "Atenção clínica",
-    4: "Alta criticidade",
+    1: "Nunca",
+    2: "Raramente",
+    3: "Às vezes",
+    4: "Frequentemente",
+    5: "Sempre",
 }
 
 
@@ -181,8 +184,8 @@ def submission_detail(submission_id):
 
     detail_metrics = {
         "average_score": round(submission.total_score / len(chart_points), 1) if chart_points else 0,
-        "items_requiring_attention": sum(1 for item in chart_points if item["score"] >= 3),
-        "highest_score_count": sum(1 for item in chart_points if item["score"] == 4),
+        "items_requiring_attention": sum(1 for item in chart_points if item["score"] >= 4),
+        "highest_score_count": sum(1 for item in chart_points if item["score"] == 5),
     }
 
     return render_template(
@@ -222,8 +225,8 @@ def submission_detail_advanced(submission_id):
 
     detail_metrics = {
         "average_score": round(submission.total_score / len(chart_points), 1) if chart_points else 0,
-        "items_requiring_attention": sum(1 for item in chart_points if item["score"] >= 3),
-        "highest_score_count": sum(1 for item in chart_points if item["score"] == 4),
+        "items_requiring_attention": sum(1 for item in chart_points if item["score"] >= 4),
+        "highest_score_count": sum(1 for item in chart_points if item["score"] == 5),
     }
 
     return render_template(

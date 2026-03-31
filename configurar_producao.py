@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script auxiliar para configurar o Deiapsic para produção.
+Script auxiliar para configurar o AMFRA para produção.
 Ajuda a validar e configurar corretamente o arquivo .env
 """
 
@@ -69,7 +69,7 @@ def check_app_base_url(env_vars):
         print_warning("APP_BASE_URL está usando localhost/127.0.0.1")
         print_warning("Isso NÃO funcionará em produção!")
         print_info("Configure com o domínio ou IP público do servidor")
-        print_info("Exemplo: https://deiapsic.com.br")
+        print_info("Exemplo: https://AMFRA.com.br")
         print_info("Exemplo: http://192.168.1.100:5001")
         return False
     
@@ -222,7 +222,7 @@ def interactive_setup():
     # APP_BASE_URL
     print("1. Qual é o endereço público do servidor?")
     print("   Exemplos:")
-    print("   - https://deiapsic.com.br")
+    print("   - https://AMFRA.com.br")
     print("   - http://192.168.1.100:5001")
     app_base_url = input("\nAPP_BASE_URL: ").strip()
     
@@ -267,7 +267,7 @@ def interactive_setup():
     print("\n" + "=" * 60)
     print("Gerando novo arquivo .env...")
     
-    env_content = f"""# Configuração de Produção - Deiapsic
+    env_content = f"""# Configuração de Produção - AMFRA
 # Gerado automaticamente em {Path.cwd()}
 
 # Segurança
@@ -321,7 +321,7 @@ WHATSAPP_TIMEOUT_SECONDS=15
 
 def main():
     """Função principal"""
-    print_header("Deiapsic - Verificador de Configuração de Produção")
+    print_header("AMFRA - Verificador de Configuração de Produção")
     
     if len(sys.argv) > 1 and sys.argv[1] == "--setup":
         interactive_setup()

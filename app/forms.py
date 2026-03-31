@@ -4,14 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import DateField, HiddenField, IntegerField, PasswordField, RadioField, StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length
 
-from .questionnaire import QUESTION_DEFINITIONS
-
-
-def _radio_choices(question_number: int) -> list[tuple[str, str]]:
-    for question in QUESTION_DEFINITIONS:
-        if question["number"] == question_number:
-            return question["options"]
-    raise ValueError(f"Pergunta {question_number} não encontrada.")
+from .questionnaire import QUESTION_DEFINITIONS, LIKERT_CHOICES
 
 
 class PublicQuestionnaireForm(FlaskForm):
@@ -36,16 +29,42 @@ class PublicQuestionnaireForm(FlaskForm):
         format="%Y-%m-%d",
     )
 
-    question_1 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(1))
-    question_2 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(2))
-    question_3 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(3))
-    question_4 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(4))
-    question_5 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(5))
-    question_6 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(6))
-    question_7 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(7))
-    question_8 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(8))
-    question_9 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(9))
-    question_10 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=_radio_choices(10))
+    # 35 campos gerados dinamicamente com escala Likert 1-5
+    question_1  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_2  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_3  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_4  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_5  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_6  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_7  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_8  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_9  = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_10 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_11 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_12 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_13 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_14 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_15 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_16 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_17 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_18 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_19 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_20 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_21 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_22 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_23 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_24 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_25 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_26 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_27 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_28 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_29 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_30 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_31 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_32 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_33 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_34 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
+    question_35 = RadioField(validators=[DataRequired(message="Selecione uma alternativa.")], choices=LIKERT_CHOICES)
 
     submit = SubmitField("Enviar avaliação")
 
@@ -57,13 +76,13 @@ class PublicQuestionnaireForm(FlaskForm):
         payloads = []
         for question in QUESTION_DEFINITIONS:
             field = getattr(self, f"question_{question['number']}")
-            selected_option = field.data
-            selected_text = dict(question["options"])[selected_option]
+            selected_value = field.data  # "1" .. "5"
+            selected_text = dict(LIKERT_CHOICES)[selected_value]
             payloads.append(
                 {
                     "question_number": question["number"],
                     "question_text": question["text"],
-                    "selected_option": selected_option,
+                    "selected_option": selected_value,
                     "selected_text": selected_text,
                 }
             )

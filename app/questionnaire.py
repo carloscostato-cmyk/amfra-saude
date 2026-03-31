@@ -1,104 +1,83 @@
-QUESTIONNAIRE_CODE = "RN1"
+"""
+HSE-IT — Health Safety Executive Indicator Tool
+35 perguntas, escala Likert:
+  1 = Nunca | 2 = Raramente | 3 = Às vezes | 4 = Frequentemente | 5 = Sempre
+
+Dimensões (conforme Anexo 2):
+  DEMANDAS        → 03, 06, 09, 12, 16, 18, 20, 22
+  CONTROLE        → 02, 10, 15, 19, 25, 30
+  APOIO DA CHEFIA → 08, 23, 29, 33, 35
+  APOIO DOS COLEGAS → 07, 24, 27, 31
+  RELACIONAMENTOS → 05, 14, 21, 34
+  CARGO           → 01, 04, 11, 13, 17
+  COMUNICAÇÃO E MUDANÇAS → 26, 28, 32
+"""
+
+QUESTIONNAIRE_CODE = "HSE-IT"
+
+LIKERT_CHOICES = [
+    ("1", "1 – Nunca"),
+    ("2", "2 – Raramente"),
+    ("3", "3 – Às vezes"),
+    ("4", "4 – Frequentemente"),
+    ("5", "5 – Sempre"),
+]
+
+# Dimensões e os números das perguntas que as compõem
+DIMENSIONS = {
+    "DEMANDAS":              [3, 6, 9, 12, 16, 18, 20, 22],
+    "CONTROLE":              [2, 10, 15, 19, 25, 30],
+    "APOIO DA CHEFIA":      [8, 23, 29, 33, 35],
+    "APOIO DOS COLEGAS":    [7, 24, 27, 31],
+    "RELACIONAMENTOS":       [5, 14, 21, 34],
+    "CARGO":                 [1, 4, 11, 13, 17],
+    "COMUNICAÇÃO E MUDANÇAS": [26, 28, 32],
+}
+
+# Textos das perguntas na mesma ordem do HSE-IT (1–35)
+QUESTION_TEXTS = [
+    "Tenho clareza sobre o que se espera do meu trabalho.",                                          # 01
+    "Posso decidir quando fazer uma pausa.",                                                          # 02
+    "As exigências de trabalho feitas por colegas e supervisores são difíceis de combinar.",          # 03
+    "Eu sei como fazer o meu trabalho.",                                                             # 04
+    "Falam ou se comportam comigo de forma dura.",                                                   # 05
+    "Tenho prazos inatingíveis.",                                                                    # 06
+    "Quando o trabalho se torna difícil, posso contar com ajuda dos colegas.",                       # 07
+    "Recebo informações e suporte que me ajudam no trabalho que eu faço.",                           # 08
+    "Devo trabalhar muito intensamente.",                                                            # 09
+    "Consideram a minha opinião sobre a velocidade do meu trabalho.",                                # 10
+    "Estão claras as minhas tarefas e responsabilidades.",                                           # 11
+    "Eu não tenho algumas tarefas porque tenho muita coisa para fazer.",                             # 12
+    "Os objetivos e metas do meu setor são claros para mim.",                                       # 13
+    "Existem conflitos entre os colegas.",                                                           # 14
+    "Tenho liberdade de escolha de como fazer meu trabalho.",                                        # 15
+    "Não tenho possibilidade de fazer pausas suficientes.",                                          # 16
+    "Eu vejo como o meu trabalho se encaixa nos objetivos da empresa.",                              # 17
+    "Recebo pressão para trabalhar em outro horário.",                                               # 18
+    "Tenho liberdade de escolha para decidir o que fazer no meu trabalho.",                          # 19
+    "Tenho que fazer meu trabalho com muita rapidez.",                                               # 20
+    "Sinto que sou perseguido(a) no trabalho.",                                                     # 21
+    "As pausas temporárias são impossíveis de cumprir.",                                             # 22
+    "Posso confiar no meu chefe quando eu tiver problemas no trabalho.",                             # 23
+    "Meus colegas me ajudam e me dão apoio quando eu preciso.",                                      # 24
+    "Minhas sugestões são consideradas sobre como fazer meu trabalho.",                              # 25
+    "Tenho oportunidades para pedir explicações ao chefe sobre as mudanças relacionadas ao meu trabalho.", # 26
+    "No trabalho os meus colegas demonstram o respeito que mereço.",                                 # 27
+    "As pessoas são sempre consultadas sobre as mudanças no trabalho.",                              # 28
+    "Quando algo no trabalho me perturba ou irrita, posso falar com meu chefe.",                     # 29
+    "O meu horário de trabalho pode ser flexível.",                                                  # 30
+    "Os colegas estão disponíveis para escutar os meus problemas de trabalho.",                      # 31
+    "Quando há mudanças, faço o meu trabalho com o mesmo carinho.",                                  # 32
+    "Tenho suportado trabalhos emocionalmente exigentes.",                                           # 33
+    "As relações no trabalho são tensas.",                                                           # 34
+    "Meu chefe me incentiva no trabalho.",                                                           # 35
+]
 
 QUESTION_DEFINITIONS = [
     {
-        "number": 1,
-        "text": "Como você se sente emocionalmente quando está perto do seu parceiro(a)?",
-        "options": [
-            ("A", "Seguro(a), valorizado(a) e respeitado(a)"),
-            ("B", "Às vezes inseguro(a), mas geralmente bem"),
-            ("C", "Frequentemente ansioso(a) ou com medo"),
-            ("D", "Constantemente me sinto inferior ou sem valor"),
-        ],
-    },
-    {
-        "number": 2,
-        "text": "Seu parceiro(a) assume responsabilidade quando comete erros?",
-        "options": [
-            ("A", "Sempre assume e pede desculpas sinceramente"),
-            ("B", "Às vezes reconhece, mas raramente pede desculpas"),
-            ("C", "Raramente admite erros"),
-            ("D", "Nunca admite — sempre coloca a culpa em mim"),
-        ],
-    },
-    {
-        "number": 3,
-        "text": "Com que frequência seu parceiro(a) faz críticas negativas sobre você?",
-        "options": [
-            ("A", "Raramente ou nunca me critica de forma negativa"),
-            ("B", "Ocasionalmente, mas de forma construtiva"),
-            ("C", "Frequentemente me critica de forma depreciativa"),
-            ("D", "Constantemente me humilha ou diminui"),
-        ],
-    },
-    {
-        "number": 4,
-        "text": "Seu parceiro(a) demonstra empatia com seus sentimentos e necessidades?",
-        "options": [
-            ("A", "Sempre demonstra compreensão genuína"),
-            ("B", "Às vezes se importa com como me sinto"),
-            ("C", "Raramente se preocupa com meus sentimentos"),
-            ("D", "Nunca demonstra empatia — ridiculariza ou ignora"),
-        ],
-    },
-    {
-        "number": 5,
-        "text": "Você sente que suas necessidades são consideradas no relacionamento?",
-        "options": [
-            ("A", "Sim, há equilíbrio e reciprocidade"),
-            ("B", "Na maioria das vezes, com algumas exceções"),
-            ("C", "Raramente — quase tudo gira em torno do(a) parceiro(a)"),
-            ("D", "Nunca — meu parceiro(a) é o centro absoluto"),
-        ],
-    },
-    {
-        "number": 6,
-        "text": "Seu parceiro(a) já tentou afastá-lo(a) de amigos ou familiares?",
-        "options": [
-            ("A", "Nunca — meu círculo social é respeitado"),
-            ("B", "Algumas vezes, sem grande impacto"),
-            ("C", "Frequentemente tenta me afastar das pessoas"),
-            ("D", "Totalmente me isolou das pessoas próximas"),
-        ],
-    },
-    {
-        "number": 7,
-        "text": "Como você descreveria a comunicação no seu relacionamento?",
-        "options": [
-            ("A", "Aberta, respeitosa e saudável"),
-            ("B", "Geralmente boa, com alguns conflitos pontuais"),
-            ("C", "Frequentemente tensa e unilateral"),
-            ("D", "Ele(a) distorce a realidade e controla as conversas"),
-        ],
-    },
-    {
-        "number": 8,
-        "text": "Seu parceiro(a) já fez você duvidar da sua própria memória ou percepção da realidade (gaslighting)?",
-        "options": [
-            ("A", "Nunca — confio plenamente na minha percepção"),
-            ("B", "Raramente, em situações pontuais"),
-            ("C", "Às vezes me faz sentir confuso(a) sobre o que aconteceu"),
-            ("D", "Constantemente questiono minha própria sanidade"),
-        ],
-    },
-    {
-        "number": 9,
-        "text": "Como está sua autoestima desde que está nesse relacionamento?",
-        "options": [
-            ("A", "Melhor do que antes — me sinto crescendo"),
-            ("B", "Igual — não mudou significativamente"),
-            ("C", "Pior — perdi confiança em mim mesmo(a)"),
-            ("D", "Muito pior — sinto que perdi minha identidade"),
-        ],
-    },
-    {
-        "number": 10,
-        "text": "Você já sentiu medo da reação emocional ou comportamental do seu parceiro(a)?",
-        "options": [
-            ("A", "Nunca — me sinto seguro(a) com ele(a)"),
-            ("B", "Raramente, em momentos específicos de conflito"),
-            ("C", "Frequentemente preciso medir minhas palavras"),
-            ("D", "Sempre — ando na ponta dos pés com medo"),
-        ],
-    },
+        "number": i + 1,
+        "text": QUESTION_TEXTS[i],
+        "options": LIKERT_CHOICES,
+    }
+    for i in range(35)
 ]
