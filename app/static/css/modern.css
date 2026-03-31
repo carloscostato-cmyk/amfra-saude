@@ -380,3 +380,41 @@ h3 {
         flex: 1 1 calc(20% - 0.5rem);
     }
 }
+/* ── Alertas (Flash) ─────────────────────────────────────── */
+.flash-stack {
+    margin-bottom: 2rem !important;
+}
+
+.flash {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem !important;
+    border-radius: var(--radius-md) !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    animation: flashFade 0.4s ease-out !important;
+}
+
+@keyframes flashFade {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.flash--danger {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fee2e2 !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08) !important;
+}
+
+.flash--warning {
+    background: #fffbeb !important;
+    color: #92400e !important;
+    border: 1px solid #fef3c7 !important;
+}
+
+.flash--success {
+    background: #f0fdf4 !important;
+    color: #166534 !important;
+    border: 1px solid #dcfce7 !important;
+}

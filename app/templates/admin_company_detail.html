@@ -4,11 +4,11 @@
 
 {% block content %}
 <section class="admin-shell" style="max-width: 1400px; margin: 0 auto;">
-    <div class="admin-shell__header" style="padding-bottom: 2rem; border-bottom: 1px solid var(--line);">
-        <div>
+    <div class="admin-shell__header">
+        <div class="admin-shell__brand">
             <span class="section-kicker">Perfil da Empresa Organizacional</span>
-            <h1 style="font-size: 2.5rem; margin-top: 0.5rem; color: var(--text);">{{ company.name }}</h1>
-            <p style="color: var(--text-soft); font-size: 1.1rem; margin-top: 0.5rem;">
+            <h1>{{ company.name }}</h1>
+            <p class="lede lede--dark">
                 <strong>Anotação do RH:</strong> {{ company.hr_data or "Nenhuma anotação registrada pelo time comercial." }}
             </p>
         </div>
@@ -17,6 +17,7 @@
             <a href="{{ url_for('admin.company_list') }}" class="button button--ghost">Sair</a>
         </div>
     </div>
+
 
     <section class="admin-actions" style="margin-top: 2rem;">
         <article class="action-panel action-panel--highlight" style="background: rgba(37,99,235,0.03); border: 1px dashed rgba(37,99,235,0.2); box-shadow: none;">
@@ -45,7 +46,8 @@
             <strong style="color: var(--text-soft); font-size: 0.95rem; font-weight: 600;">{{ employees|length }} / {{ company.employee_count }} submissões aguardadas</strong>
         </div>
 
-        <div class="modern-list-container" style="width: 100%; overflow: visible; padding-bottom: 4rem;">
+        <div class="modern-list-container table-wrap" style="padding-bottom: 4rem;">
+
             <table class="data-table" style="background: transparent; border: none; box-shadow: none;">
                 <thead style="background: transparent;">
                     <tr>

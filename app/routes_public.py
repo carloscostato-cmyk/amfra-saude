@@ -71,7 +71,17 @@ def questionnaire(company_token):
         return redirect(url_for("public.thank_you"))
 
     if form.is_submitted():
-        flash("Revise os campos destacados antes de enviar a avaliação.", "warning")
+        # Identificar quais perguntas (1-35) estão sem resposta
+        missing_questions = []
+        for i in range(1, 36):
+            field = getattr(form, f"question_{i}")
+            if not field.data:
+                missing_questions.append(str(i))
+        
+        if missing_questions:
+            flash(f"Respostas obrigatórias pendentes. Clique nas perguntas faltantes: {', '.join(missing_questions)}", "danger")
+        else:
+            flash("Revise os campos destacados antes de enviar a avaliação.", "warning")
 
     return render_template(
         "public_form.html",

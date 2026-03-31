@@ -4,17 +4,18 @@
 
 {% block content %}
 <section class="admin-shell" style="max-width: 1400px; margin: 0 auto;">
-    <div class="admin-shell__header" style="padding-bottom: 2rem; border-bottom: 1px solid var(--line);">
-        <div>
+    <div class="admin-shell__header">
+        <div class="admin-shell__brand">
             <span class="section-kicker">Painel Administrativo</span>
-            <h1 style="font-size: 2.5rem; margin-top: 0.5rem; color: var(--text);">Central Corporativa</h1>
-            <p style="color: var(--text-soft); font-size: 1.1rem;">Gerencie as empresas parceiras e acompanhe os relatórios consolidados do Estudo NR-1 em tempo real.</p>
+            <h1>Central Corporativa</h1>
+            <p class="lede lede--dark">Gerencie as empresas parceiras e acompanhe os relatórios consolidados do Estudo NR-1 em tempo real.</p>
         </div>
         <div class="admin-shell__actions">
             <a href="{{ url_for('admin.logout') }}" class="button button--ghost" onclick="event.preventDefault(); document.getElementById('logout-form-main').submit();">Sair</a>
             <a href="{{ url_for('admin.company_new') }}" class="button button--primary">+ Nova Empresa</a>
         </div>
     </div>
+
 
     {# Logout form hidden #}
     <form id="logout-form-main" method="post" action="{{ url_for('admin.logout') }}" style="display:none;">
@@ -30,7 +31,8 @@
             <strong style="color: var(--text-soft); font-size: 0.95rem; font-weight: 600;">{{ companies|length }} empresa(s) ativa(s)</strong>
         </div>
 
-        <div class="modern-list-container" style="width: 100%; overflow: visible;">
+        <div class="modern-list-container table-wrap">
+
             <table class="data-table" style="background: transparent; border: none; box-shadow: none;">
                 <thead style="background: transparent;">
                     <tr>
