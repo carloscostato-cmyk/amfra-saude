@@ -16,10 +16,17 @@
     <div class="site-backdrop" aria-hidden="true"></div>
     <header class="site-header">
         <div class="site-header__inner">
-            <a class="brandmark" href="{% if current_user.is_authenticated %}{{ url_for('admin.company_list') }}{% else %}{{ url_for('admin.login') }}{% endif %}">
+            {% if request.blueprint == 'admin' %}
+            <a class="brandmark" href="{{ url_for('admin.company_list') }}">
                 <span class="brandmark__eyebrow">Avaliação Clínica Digital</span>
                 <span class="brandmark__title" style="font-size: 1.5rem; letter-spacing: -0.03em;">AMFRA SAÚDE MENTAL</span>
             </a>
+            {% else %}
+            <div class="brandmark">
+                <span class="brandmark__eyebrow">Avaliação Clínica Digital</span>
+                <span class="brandmark__title" style="font-size: 1.5rem; letter-spacing: -0.03em;">AMFRA SAÚDE MENTAL</span>
+            </div>
+            {% endif %}
 
             <div class="site-header__actions">
                 {# Botões Admin/Sair removidos do header público — navegação apenas no painel admin #}
