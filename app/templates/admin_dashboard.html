@@ -11,9 +11,15 @@
             <p style="color: var(--text-soft); font-size: 1.1rem;">Gerencie as empresas parceiras e acompanhe os relatórios consolidados do Estudo NR-1 em tempo real.</p>
         </div>
         <div class="admin-shell__actions">
+            <a href="{{ url_for('admin.logout') }}" class="button button--ghost" onclick="event.preventDefault(); document.getElementById('logout-form-main').submit();">Sair</a>
             <a href="{{ url_for('admin.company_new') }}" class="button button--primary">+ Nova Empresa</a>
         </div>
     </div>
+
+    {# Logout form hidden #}
+    <form id="logout-form-main" method="post" action="{{ url_for('admin.logout') }}" style="display:none;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
 
     <section style="margin-top: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
@@ -30,7 +36,7 @@
                     <tr>
                         <th style="background: transparent; border-bottom: 2px solid var(--line); padding-left: 0; color: var(--text-soft);">Nome da Empresa</th>
                         <th style="background: transparent; border-bottom: 2px solid var(--line); color: var(--text-soft);">Colaboradores</th>
-                        <th style="background: transparent; border-bottom: 2px solid var(--line); color: var(--text-soft);">Cadastro Inicial</th>
+                        <th style="background: transparent; border-bottom: 2px solid var(--line); color: var(--text-soft);">Cadastro</th>
                         <th style="background: transparent; border-bottom: 2px solid var(--line); text-align: right; padding-right: 0; color: var(--text-soft);">Ações</th>
                     </tr>
                 </thead>
@@ -48,23 +54,40 @@
                             <td style="color: var(--text-soft);">{{ company.created_at.strftime("%d/%m/%Y") }}</td>
                             <td style="text-align: right; padding-right: 0; white-space: nowrap;">
                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
-                                    <button type="button" class="button button--ghost button--compact" 
-                                            onclick="copyLink('{{ url_for('public.questionnaire', company_token=company.token, _external=True) }}', this)"
+
+                                    {# Copiar link público #}
+                                    <button type="button"
+                                            id="copyBtn-{{ company.id }}"
+                                            class="button button--ghost button--compact"
+                                            onclick="copyCompanyLink('{{ url_for('public.questionnaire', company_token=company.token, _external=True) }}', {{ company.id }})"
                                             style="border-color: var(--line); color: var(--text-soft);">
                                         Copiar Link
                                     </button>
-                                    
-                                    <a class="button button--ghost button--compact" href="{{ url_for('admin.company_detail', company_id=company.id) }}" style="border-color: var(--line); color: var(--text);">
+
+                                    <a class="button button--ghost button--compact"
+                                       href="{{ url_for('admin.company_detail', company_id=company.id) }}"
+                                       style="border-color: var(--line); color: var(--text);">
                                         Detalhes
                                     </a>
 
-                                    <a class="button button--primary button--compact" href="{{ url_for('admin.company_nr1_report', company_id=company.id) }}" style="background: var(--accent) !important;">
-                                        Abrir Estudo NR-1
+                                    <a class="button button--primary button--compact"
+                                       href="{{ url_for('admin.company_nr1_report', company_id=company.id) }}"
+                                       style="background: var(--accent) !important;">
+                                        Estudo NR-1
                                     </a>
 
-                                    <form action="{{ url_for('admin.company_delete', company_id=company.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('ATENÇÃO: Você excluirá permanentemente esta empresa e TODOS os resultados de seus colaboradores. Confirmar exclusão?');">
-                                        <button type="submit" class="button button--compact" style="background: #ef4444 !important; color: white; border: none; padding: 0.5rem 0.8rem; border-radius: 6px; cursor: pointer;">
-                                            &times;
+                                    {# ── Botão deletar com CSRF ── #}
+                                    <form id="del-form-{{ company.id }}"
+                                          action="{{ url_for('admin.company_delete', company_id=company.id) }}"
+                                          method="POST"
+                                          style="display:inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="button"
+                                                class="button button--compact"
+                                                title="Excluir empresa {{ company.name }}"
+                                                onclick="confirmDelete({{ company.id }}, '{{ company.name | replace("'","\'") }}')"
+                                                style="background: #fef2f2 !important; color: #dc2626; border: 1px solid #fecaca; padding: 0.45rem 0.8rem; border-radius: 6px; cursor: pointer; font-weight: 700;">
+                                            🗑
                                         </button>
                                     </form>
                                 </div>
@@ -84,13 +107,23 @@
 </section>
 
 <script>
-document.querySelectorAll('[id^="copyLinkBtn-"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        navigator.clipboard.writeText(btn.dataset.copyText);
-        let originalText = btn.innerText;
-        btn.innerText = "Copiado!";
-        setTimeout(() => { btn.innerText = originalText; }, 2000);
+function copyCompanyLink(url, id) {
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('copyBtn-' + id);
+        if (btn) {
+            const orig = btn.innerText;
+            btn.innerText = '✓ Copiado!';
+            btn.style.color = '#10b981';
+            setTimeout(() => { btn.innerText = orig; btn.style.color = ''; }, 2000);
+        }
     });
-});
+}
+
+function confirmDelete(id, name) {
+    const msg = `ATENÇÃO: Você excluirá permanentemente "${name}" e TODOS os resultados de seus colaboradores.\n\nDeseja confirmar a exclusão?`;
+    if (window.confirm(msg)) {
+        document.getElementById('del-form-' + id).submit();
+    }
+}
 </script>
 {% endblock %}

@@ -1,185 +1,571 @@
 {% extends "base.html" %}
 
-{% block title %}Detalhe da Avaliação | {{ app_name }}{% endblock %}
+{% block title %}Avaliação — {{ submission.employee.first_name }} {{ submission.employee.last_name }} | Admin{% endblock %}
 
 {% block head %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   DETALHE INDIVIDUAL HSE-IT — DESIGN PREMIUM
+   ═══════════════════════════════════════════════════ */
+
+.sub-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 2rem 5rem;
+}
+
+/* ── Cabeçalho ─────────────────────────────────── */
+.sub-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 2.5rem;
+}
+.sub-header__meta { flex: 1; }
+.sub-header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+.sub-header__eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 3px;
+    background: #2563eb;
+    border-radius: 2px;
+}
+.sub-header__name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.15;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.03em;
+}
+.sub-header__subtitle {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+.sub-header__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+}
+
+/* ── KPIs ───────────────────────────────────────── */
+.sub-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+.sub-kpi {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    position: relative;
+    overflow: hidden;
+}
+.sub-kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    border-radius: 14px 14px 0 0;
+}
+.sub-kpi__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+}
+.sub-kpi__value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+.sub-kpi__value--baixo { color: #ef4444; }
+.sub-kpi__value--medio { color: #d97706; }
+.sub-kpi__value--alto  { color: #10b981; }
+.sub-kpi__sub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* ── Legenda ──────────────────────────────────── */
+.sub-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+}
+.sub-legend__title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    font-size: 0.7rem;
+}
+.sub-legend__item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+}
+.sub-legend__dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.sub-legend__dot--baixo { background: #ef4444; }
+.sub-legend__dot--medio { background: #d97706; }
+.sub-legend__dot--alto  { background: #10b981; }
+
+/* ── Seções ───────────────────────────────────── */
+.sub-section { margin-bottom: 3rem; }
+.sub-section__head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+.sub-section__kicker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 3px 10px;
+    border-radius: 99px;
+    flex-shrink: 0;
+}
+.sub-section__title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+/* ── Grid interpretação + gráfico radar ─────── */
+.sub-interp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+.sub-interp-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.75rem;
+}
+.sub-interp-classification {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+.sub-interp-classification--baixo { background:#fef2f2; color:#dc2626; }
+.sub-interp-classification--medio { background:#fffbeb; color:#b45309; }
+.sub-interp-classification--alto  { background:#f0fdf4; color:#15803d; }
+.sub-interp-text {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.7;
+    margin: 0;
+}
+.sub-radar-wrap {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Tabela dimensões individual ────────────── */
+.sub-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.sub-table thead tr {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+.sub-table th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    padding: 0.9rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+.sub-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+.sub-table tbody tr:last-child td { border-bottom: none; }
+.sub-table tbody tr:hover td { background: #f8fafc; }
+
+.sub-progress {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 5px;
+    min-width: 100px;
+}
+.sub-progress__fill { height: 100%; border-radius: 99px; }
+.sub-progress__fill--baixo { background: linear-gradient(90deg,#ef4444,#f87171); }
+.sub-progress__fill--medio { background: linear-gradient(90deg,#f59e0b,#fcd34d); }
+.sub-progress__fill--alto  { background: linear-gradient(90deg,#10b981,#34d399); }
+
+.sub-badge {
+    display: inline-flex;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 99px;
+}
+.sub-badge--baixo { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+.sub-badge--medio { background:#fffbeb; color:#b45309; border:1px solid #fde68a; }
+.sub-badge--alto  { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+
+/* ── Respostas item a item ───────────────────── */
+.sub-answers { display: flex; flex-direction: column; gap: 0; }
+.sub-answer-item {
+    display: grid;
+    grid-template-columns: 52px 1fr 90px 80px;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+.sub-answer-item:last-child { border-bottom: none; }
+.sub-answer-item__num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1;
+}
+.sub-answer-item__q {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 3px;
+    line-height: 1.4;
+}
+.sub-answer-item__a {
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+.sub-answer-item__score {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1;
+}
+.sub-answer-item__score--1 { color: #10b981; }
+.sub-answer-item__score--2 { color: #84cc16; }
+.sub-answer-item__score--3 { color: #f59e0b; }
+.sub-answer-item__score--4 { color: #f97316; }
+.sub-answer-item__score--5 { color: #ef4444; }
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 900px) {
+    .sub-kpis { grid-template-columns: repeat(2, 1fr); }
+    .sub-interp-grid { grid-template-columns: 1fr; }
+    .sub-header { flex-direction: column; }
+    .sub-answer-item { grid-template-columns: 40px 1fr 70px 60px; gap: 0.75rem; }
+}
+@media (max-width: 600px) {
+    .sub-kpis { grid-template-columns: 1fr 1fr; }
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<section class="detail-shell">
-    <div class="detail-hero">
-        <div class="detail-hero-content">
-            {% if submission.patient_photo %}
-            <div class="patient-photo-hero">
-                <img src="{{ submission.patient_photo }}" alt="Foto de {{ submission.patient_name }}" class="patient-photo-hero-img">
-            </div>
-            {% endif %}
-            <div>
-                <span class="section-kicker">Resposta individual</span>
-                <h1>{{ submission.patient_name }}</h1>
-                <p>Visualização protegida com leitura clínica, síntese do resultado e mapa visual das dimensões mais sensíveis da resposta.</p>
-            </div>
-        </div>
+{% set emp = submission.employee %}
+{% set avg = detail_metrics.average_score %}
+{% set band = submission.classification %}
+{% set band_cls = band|lower|replace('é','e')|replace('ã','a') %}
 
-        <div class="detail-hero__actions">
-            <button type="button" class="button button--ghost" data-copy-text="{{ detail_url }}">Copiar link</button>
+<div class="sub-page">
+
+    {# ── Cabeçalho ──────────────────────── #}
+    <div class="sub-header">
+        <div class="sub-header__meta">
+            <div class="sub-header__eyebrow">Avaliação Individual HSE-IT · NR-1</div>
+            <h1 class="sub-header__name">{{ emp.first_name }} {{ emp.last_name }}</h1>
+            <p class="sub-header__subtitle">
+                Prontuário clínico individual — Health Safety Executive Indicator Tool.
+                Data de resposta: <strong>{{ submission.questionnaire_date.strftime("%d/%m/%Y") }}</strong>
+                &nbsp;|&nbsp; Enviado em: <strong>{{ submission.created_at.strftime("%d/%m/%Y %H:%M") }}</strong>
+            </p>
+        </div>
+        <div class="sub-header__actions">
+            <button type="button" class="button button--ghost" onclick="navigator.clipboard.writeText(window.location.href)">Copiar link</button>
             <button type="button" class="button button--primary" onclick="window.print()">Imprimir / PDF</button>
+            <a href="{{ url_for('admin.company_detail', company_id=emp.company_id) }}" class="button button--ghost">Voltar</a>
         </div>
     </div>
 
-    <section class="detail-summary">
-        <article class="summary-panel">
-            <span class="section-kicker">Resultado</span>
-            <h2>{{ submission.total_score }} pontos</h2>
-            <p class="classification-highlight">{{ submission.classification }}</p>
-            <p>{{ submission.interpretation }}</p>
-        </article>
+    {# ── KPIs ─────────────────────────── #}
+    <div class="sub-kpis">
+        <div class="sub-kpi">
+            <span class="sub-kpi__label">Média Global (1–5)</span>
+            <span class="sub-kpi__value sub-kpi__value--{{ band_cls }}">{{ avg }}</span>
+            <span class="sub-kpi__sub">Média aritmética de 35 respostas</span>
+        </div>
+        <div class="sub-kpi">
+            <span class="sub-kpi__label">Classificação</span>
+            <span class="sub-kpi__value sub-kpi__value--{{ band_cls }}">{{ band }}</span>
+            <span class="sub-kpi__sub">Faixa Likert interpretada</span>
+        </div>
+        <div class="sub-kpi">
+            <span class="sub-kpi__label">Itens de Atenção (≥4)</span>
+            <span class="sub-kpi__value">{{ detail_metrics.items_requiring_attention }}</span>
+            <span class="sub-kpi__sub">de 35 perguntas</span>
+        </div>
+        <div class="sub-kpi">
+            <span class="sub-kpi__label">Respostas Máximas (5)</span>
+            <span class="sub-kpi__value">{{ detail_metrics.highest_score_count }}</span>
+            <span class="sub-kpi__sub">pontuação máxima Likert</span>
+        </div>
+    </div>
 
-        {% if submission.patient_photo %}
-        <article class="summary-panel summary-panel--photo">
-            <span class="section-kicker">Foto do Paciente</span>
-            <div class="patient-photo-container">
-                <img src="{{ submission.patient_photo }}" alt="Foto de {{ submission.patient_name }}" class="patient-photo-detail">
+    {# ── Legenda ──────────────────────── #}
+    <div class="sub-legend">
+        <span class="sub-legend__title">Legenda — Média Likert</span>
+        <span class="sub-legend__item"><span class="sub-legend__dot sub-legend__dot--baixo"></span><strong style="color:#dc2626;">BAIXO</strong>&nbsp;1,00–2,29</span>
+        <span class="sub-legend__item"><span class="sub-legend__dot sub-legend__dot--medio"></span><strong style="color:#b45309;">MÉDIO</strong>&nbsp;2,30–3,69</span>
+        <span class="sub-legend__item"><span class="sub-legend__dot sub-legend__dot--alto"></span><strong style="color:#15803d;">ALTO</strong>&nbsp;3,70–5,00</span>
+    </div>
+
+    {# ── SEÇÃO 1: Interpretação + Radar ─ #}
+    <div class="sub-section">
+        <div class="sub-section__head">
+            <span class="sub-section__kicker">Resultado</span>
+            <h2 class="sub-section__title">Interpretação Clínica</h2>
+        </div>
+        <div class="sub-interp-grid">
+            <div class="sub-interp-box">
+                <span class="sub-interp-classification sub-interp-classification--{{ band_cls }}">{{ band }}</span>
+                <p class="sub-interp-text">{{ submission.interpretation }}</p>
             </div>
-        </article>
-        {% else %}
-        <article class="summary-panel summary-panel--muted">
-            <span class="section-kicker">Metadados</span>
-            <dl class="meta-list">
-                <div>
-                    <dt>Data informada</dt>
-                    <dd>{{ submission.questionnaire_date.strftime("%d/%m/%Y") }}</dd>
-                </div>
-                <div>
-                    <dt>Data/hora do envio</dt>
-                    <dd>{{ submission.created_at.strftime("%d/%m/%Y %H:%M") }}</dd>
-                </div>
-                <div>
-                    <dt>UUID</dt>
-                    <dd>{{ submission.uuid }}</dd>
-                </div>
-            </dl>
-        </article>
-        {% endif %}
-    </section>
-
-    <section class="detail-grid">
-        <article class="detail-panel">
-            <div class="detail-panel__header">
-                <span class="section-kicker">Resultado e gráfico</span>
-                <h2>Mapa clínico por dimensão</h2>
+            <div class="sub-radar-wrap">
+                <canvas id="radarChart" style="max-width:380px; max-height:320px;"></canvas>
             </div>
+        </div>
+    </div>
 
-            <div class="rn1-levels-chart">
-                <h3 class="rn1-chart-title">Classificação RN1 - Níveis de Relacionamento Narcisista</h3>
-                <div class="rn1-chart-container">
-                    <canvas id="rn1LevelsChart"></canvas>
-                </div>
-                <div class="rn1-legend">
-                    <div class="rn1-legend-item rn1-legend-item--level1">
-                        <span class="rn1-legend-label">Nível 1 (10-15 pts)</span>
-                        <span class="rn1-legend-desc">Relacionamento Saudável</span>
-                    </div>
-                    <div class="rn1-legend-item rn1-legend-item--level2">
-                        <span class="rn1-legend-label">Nível 2 (16-25 pts)</span>
-                        <span class="rn1-legend-desc">Sinais de Alerta</span>
-                    </div>
-                    <div class="rn1-legend-item rn1-legend-item--level3">
-                        <span class="rn1-legend-label">Nível 3 (26-35 pts)</span>
-                        <span class="rn1-legend-desc">Relacionamento Tóxico</span>
-                    </div>
-                    <div class="rn1-legend-item rn1-legend-item--level4">
-                        <span class="rn1-legend-label">Nível 4 (36-40 pts)</span>
-                        <span class="rn1-legend-desc">Abuso Narcisista Severo</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="indicator-strip">
-                {% for indicator in top_indicators %}
-                    <div class="indicator-pill indicator-pill--score-{{ indicator.score }}">
-                        <span>P{{ indicator.question_number }} · {{ indicator.short_label }}</span>
-                        <strong>{{ indicator.score }}/4</strong>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="chart-toolbar" role="toolbar" aria-label="Controles do gráfico">
-                <div class="chart-toolbar__group">
-                    <button type="button" class="button button--ghost button--compact" data-chart-mode="ordered">Ordem original</button>
-                    <button type="button" class="button button--ghost button--compact" data-chart-mode="severity">Mais críticos</button>
-                    <button type="button" class="button button--ghost button--compact" data-chart-mode="focus">Somente atenção</button>
-                    <button type="button" class="button button--ghost button--compact" data-chart-mode="all">Mostrar tudo</button>
-                </div>
-                <p class="chart-toolbar__hint">Passe o mouse para inspecionar, clique em uma barra para fixar e rolar até a resposta correspondente.</p>
-            </div>
-
-            <div class="chart-legend" aria-label="Faixas do gráfico">
-                <div class="chart-legend__item chart-legend__item--score-1">1 · Base estável</div>
-                <div class="chart-legend__item chart-legend__item--score-2">2 · Observação</div>
-                <div class="chart-legend__item chart-legend__item--score-3">3 · Atenção clínica</div>
-                <div class="chart-legend__item chart-legend__item--score-4">4 · Alta criticidade</div>
-            </div>
-
-            <div class="chart-stage">
-                <div class="chart-box">
-                    <canvas id="questionScoreChart" aria-label="Gráfico horizontal de pontuação por pergunta"></canvas>
-                </div>
-
-                <aside class="chart-inspector" aria-live="polite">
-                    <div>
-                        <span class="section-kicker">Detalhe em foco</span>
-                        <h3 id="chartInspectorTitle">Passe o mouse em uma barra</h3>
-                        <p id="chartInspectorQuestion">O painel exibirá a dimensão, a pontuação e a leitura clínica da resposta selecionada.</p>
-                    </div>
-                    <div class="chart-inspector__meta">
-                        <div>
-                            <span>Dimensão</span>
-                            <strong id="chartInspectorDimension">-</strong>
-                        </div>
-                        <div>
-                            <span>Pontuação</span>
-                            <strong id="chartInspectorScore">-</strong>
-                        </div>
-                        <div>
-                            <span>Leitura</span>
-                            <strong id="chartInspectorIntensity">-</strong>
-                        </div>
-                    </div>
-                    <p class="chart-inspector__hint">Clique em qualquer barra para fixar o item e abrir a resposta relacionada logo abaixo.</p>
-                </aside>
-            </div>
-
-            <p class="chart-footnote">Organizado para leitura rápida, impressão e discussão clínica por tema central de cada pergunta.</p>
-        </article>
-    </section>
-
-    <section class="detail-panel detail-panel--answers">
-        <div class="detail-panel__header">
-            <span class="section-kicker">Respostas selecionadas</span>
-            <h2>Leitura item a item</h2>
+    {# ── SEÇÃO 2: Resultado por Dimensão ─ #}
+    <div class="sub-section">
+        <div class="sub-section__head">
+            <span class="sub-section__kicker">HSE-IT</span>
+            <h2 class="sub-section__title">Resultado por Dimensão</h2>
         </div>
 
-        <div class="answers-list">
-                {% for answer in submission.answers %}
-                <article class="answer-item" id="answer-{{ answer.question_number }}" data-question-anchor="{{ answer.question_number }}">
-                    <div class="answer-item__index">{{ "%02d"|format(answer.question_number) }}</div>
-                    <div class="answer-item__content">
-                        <h3>{{ answer.question_text }}</h3>
-                        <p><strong>Alternativa {{ answer.selected_option }}</strong> — {{ answer.selected_text }}</p>
-                    </div>
-                    <div class="answer-item__score">{{ answer.score }} pt</div>
-                </article>
+        {# Calcular médias por dimensão a partir das respostas #}
+        {% set dim_map = {
+            'DEMANDAS':               [3,6,9,12,16,18,20,22],
+            'CONTROLE':               [2,10,15,19,25,30],
+            'APOIO DA CHEFIA':        [8,23,29,33,35],
+            'APOIO DOS COLEGAS':      [7,24,27,31],
+            'RELACIONAMENTOS':        [5,14,21,34],
+            'CARGO':                  [1,4,11,13,17],
+            'COMUNICAÇÃO E MUDANÇAS': [26,28,32]
+        } %}
+        {% set score_map = {} %}
+        {% for a in submission.answers %}
+            {% if score_map.update({a.question_number: a.score}) %}{% endif %}
+        {% endfor %}
+
+        <table class="sub-table">
+            <thead>
+                <tr>
+                    <th style="width:28%;">Dimensão</th>
+                    <th style="width:20%;">Perguntas</th>
+                    <th style="width:30%;">Progresso (1–5)</th>
+                    <th style="width:10%; text-align:center;">Média</th>
+                    <th style="width:12%; text-align:center;">Nível</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for dim_name, q_nums in dim_map.items() %}
+                {% set ns = namespace(total=0, count=0) %}
+                {% for n in q_nums %}
+                    {% if n in score_map %}
+                        {% set ns.total = ns.total + score_map[n] %}
+                        {% set ns.count = ns.count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if ns.count > 0 %}
+                    {% set dim_avg = (ns.total / ns.count) | round(2) %}
+                {% else %}
+                    {% set dim_avg = 0 %}
+                {% endif %}
+                {% if dim_avg <= 2.29 %}
+                    {% set dim_band = 'BAIXO' %}
+                    {% set dim_cls  = 'baixo' %}
+                {% elif dim_avg <= 3.69 %}
+                    {% set dim_band = 'MÉDIO' %}
+                    {% set dim_cls  = 'medio' %}
+                {% else %}
+                    {% set dim_band = 'ALTO' %}
+                    {% set dim_cls  = 'alto' %}
+                {% endif %}
+                <tr>
+                    <td><strong style="color:#0f172a;">{{ dim_name }}</strong></td>
+                    <td><span style="font-size:0.8rem;color:#94a3b8;font-family:monospace;">{{ q_nums|join(', ') }}</span></td>
+                    <td>
+                        <div style="font-size:0.73rem;color:#94a3b8;display:flex;justify-content:space-between;margin-bottom:3px;"><span>1</span><span>5</span></div>
+                        <div class="sub-progress">
+                            <div class="sub-progress__fill sub-progress__fill--{{ dim_cls }}"
+                                 style="width:{{ (((dim_avg - 1) / 4) * 100)|round|int }}%;"></div>
+                        </div>
+                    </td>
+                    <td style="text-align:center;">
+                        <strong style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;">{{ dim_avg }}</strong>
+                    </td>
+                    <td style="text-align:center;">
+                        <span class="sub-badge sub-badge--{{ dim_cls }}">{{ dim_band }}</span>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# ── SEÇÃO 3: Leitura item a item ─── #}
+    <div class="sub-section">
+        <div class="sub-section__head">
+            <span class="sub-section__kicker">Respostas</span>
+            <h2 class="sub-section__title">Leitura item a item</h2>
+        </div>
+        <div class="sub-answers">
+            {% for answer in submission.answers %}
+            <div class="sub-answer-item" id="answer-{{ answer.question_number }}">
+                <div class="sub-answer-item__num">{{ "%02d"|format(answer.question_number) }}</div>
+                <div>
+                    <div class="sub-answer-item__q">{{ answer.question_text }}</div>
+                    <div class="sub-answer-item__a">Resposta selecionada: <strong>{{ answer.selected_text }}</strong></div>
+                </div>
+                <span class="sub-badge sub-badge--{% if answer.score <= 2 %}baixo{% elif answer.score <= 3 %}medio{% else %}alto{% endif %}">
+                    {% if answer.score <= 2 %}BAIXO{% elif answer.score <= 3 %}MÉDIO{% else %}ALTO{% endif %}
+                </span>
+                <div class="sub-answer-item__score sub-answer-item__score--{{ answer.score }}">{{ answer.score }}</div>
+            </div>
             {% endfor %}
         </div>
-    </section>
-</section>
+    </div>
+
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        window.submissionChartData = {{ chart_points|tojson }};
-    </script>
-    <script defer src="{{ url_for('static', filename='js/submission_detail.js') }}"></script>
+<script>
+// ── Dados para o gráfico radar ──────────────────
+const DIM_MAP = {
+    'DEMANDAS':               [3,6,9,12,16,18,20,22],
+    'CONTROLE':               [2,10,15,19,25,30],
+    'APOIO DA CHEFIA':        [8,23,29,33,35],
+    'APOIO DOS COLEGAS':      [7,24,27,31],
+    'RELACIONAMENTOS':        [5,14,21,34],
+    'CARGO':                  [1,4,11,13,17],
+    'COM. E MUDANÇAS':        [26,28,32],
+};
+const answers = {{ chart_points | tojson }};
+const scoreByQ = {};
+answers.forEach(a => { scoreByQ[a.question_number] = a.score; });
+
+const radarLabels = Object.keys(DIM_MAP);
+const radarData   = radarLabels.map(dim => {
+    const qNums = DIM_MAP[dim];
+    const vals  = qNums.map(n => scoreByQ[n] || 0).filter(v => v > 0);
+    return vals.length ? (vals.reduce((s,v) => s+v, 0) / vals.length).toFixed(2) : 0;
+});
+
+const ctx = document.getElementById('radarChart');
+if (ctx) {
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: radarLabels,
+            datasets: [{
+                label: 'Média por dimensão',
+                data: radarData,
+                backgroundColor: 'rgba(37,99,235,0.12)',
+                borderColor: '#2563eb',
+                borderWidth: 2,
+                pointBackgroundColor: '#2563eb',
+                pointRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    min: 1, max: 5,
+                    ticks: { stepSize: 1, font: { size: 10 }, color: '#94a3b8' },
+                    grid: { color: '#e2e8f0' },
+                    pointLabels: { font: { size: 10, family: 'Inter' }, color: '#475569' },
+                }
+            },
+            plugins: {
+                legend: { display: false },
+            }
+        }
+    });
+}
+</script>
 {% endblock %}
