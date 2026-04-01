@@ -2,13 +2,15 @@
 
 ## Introduction
 
-Este documento especifica os requisitos para a criação de um gráfico consolidado profissional NR-1 que mostre a distribuição dos colaboradores da empresa nos 4 níveis de classificação de riscos psicossociais (Saudável, Atenção, Alerta, Crítico). O gráfico será exibido na página de relatório NR-1 da empresa (admin_company_nr1.html) e utilizará a biblioteca Chart.js já presente no projeto.
+Este documento especifica os requisitos para os gráficos consolidados profissionais NR-1 exibidos na página de relatório da empresa (admin_company_nr1.html). O sistema inclui dois gráficos principais: (1) um gráfico de barras horizontais mostrando a distribuição dos colaboradores nos 4 níveis de classificação de riscos psicossociais (Saudável, Atenção, Alerta, Crítico), e (2) um gráfico radar exibindo as médias das 7 dimensões HSE-IT. Ambos os gráficos utilizam a biblioteca Chart.js já presente no projeto.
 
 ## Glossary
 
 - **NR1_Report_Page**: Página administrativa que exibe o relatório consolidado NR-1 de uma empresa (admin_company_nr1.html)
 - **Consolidated_Chart**: Gráfico de barras horizontais que mostra a distribuição de colaboradores por nível de classificação
+- **Radar_Chart**: Gráfico radar que mostra as médias das 7 dimensões HSE-IT em formato radial
 - **Classification_Level**: Um dos 4 níveis de risco psicossocial: Saudável, Atenção, Alerta, ou Crítico
+- **HSE_IT_Dimension**: Uma das 7 dimensões psicossociais avaliadas: DEMANDAS, CONTROLE, APOIO DA CHEFIA, APOIO DOS COLEGAS, RELACIONAMENTOS, CARGO, COMUNICAÇÃO E MUDANÇAS
 - **Submission**: Resposta completa de um colaborador ao questionário NR-1 (35 perguntas)
 - **Chart_Library**: Biblioteca Chart.js versão 4.4.2 já incluída no projeto
 - **Company**: Entidade que representa uma empresa no sistema AMFRA
@@ -86,3 +88,20 @@ Este documento especifica os requisitos para a criação de um gráfico consolid
 3. THE Consolidated_Chart SHALL include text labels in addition to color coding
 4. THE Consolidated_Chart SHALL be keyboard navigable
 5. THE Consolidated_Chart SHALL provide alternative text description of the data
+
+### Requirement 7: Exibir Gráfico Radar das 7 Dimensões HSE-IT
+
+**User Story:** Como administrador do sistema, eu quero visualizar um gráfico radar com as médias das 7 dimensões HSE-IT, para que eu possa rapidamente identificar os pontos fortes e fracos da empresa em cada dimensão psicossocial.
+
+#### Acceptance Criteria
+
+1. WHEN THE NR1_Report_Page is loaded, THE Radar_Chart SHALL be displayed in the "Análise Dimensional" section before the dimensional results table
+2. THE Radar_Chart SHALL display all 7 HSE-IT dimensions: DEMANDAS, CONTROLE, APOIO DA CHEFIA, APOIO DOS COLEGAS, RELACIONAMENTOS, CARGO, COMUNICAÇÃO E MUDANÇAS
+3. WHEN THE NR1_Agent calculates dimension averages, THE Radar_Chart SHALL display the average score for each dimension on a scale from 0 to 5
+4. THE Radar_Chart SHALL use Chart.js radar type with blue color scheme (border: #2563eb, fill: rgba(37, 99, 235, 0.2))
+5. THE Radar_Chart SHALL have a fixed height of 450px and be fully responsive across mobile and desktop devices
+6. THE Radar_Chart SHALL display tooltips showing the exact average value and classification (BAIXO < 2.30, MÉDIO 2.30-3.69, ALTO ≥ 3.70) when hovering over data points
+7. THE Radar_Chart SHALL include ARIA label "Gráfico radar mostrando as médias das 7 dimensões do HSE-IT" for screen reader accessibility
+8. THE Radar_Chart SHALL be positioned after the horizontal bar chart and before the "Resultados por Dimensão" table
+9. IF THE Radar_Chart fails to load, THEN THE system SHALL display an error message "Não foi possível carregar o gráfico radar"
+10. THE Radar_Chart SHALL use data from report.dimension_analysis provided by the NR1_Agent
