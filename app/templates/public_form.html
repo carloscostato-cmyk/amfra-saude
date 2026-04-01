@@ -106,9 +106,61 @@
                     Ao enviar, o questionário será criptografado e salvo para a análise da Doutora. 
                     Você não poderá editar as respostas e só é permitida uma resposta por colaborador.
                 </div>
-                {{ form.submit(class="button button--primary button--large") }}
+                {{ form.submit(class="button button--primary button--large", id="submitBtn") }}
             </div>
         </form>
     </section>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.assessment-form');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function(e) {
+        // Remover highlights anteriores
+        document.querySelectorAll('.question-block').forEach(block => {
+            block.style.border = '';
+            block.style.background = '';
+        });
+        
+        // Verificar quais questões não foram respondidas
+        const missingQuestions = [];
+        const questionBlocks = document.querySelectorAll('.question-block');
+        
+        questionBlocks.forEach((block, index) => {
+            const inputs = block.querySelectorAll('input[type="radio"]');
+            const isAnswered = Array.from(inputs).some(input => input.checked);
+            
+            if (!isAnswered) {
+                missingQuestions.push(index + 1);
+                // Destacar em vermelho
+                block.style.border = '2px solid #dc2626';
+                block.style.background = '#fef2f2';
+            }
+        });
+        
+        // Se houver questões faltando, prevenir submit e fazer scroll
+        if (missingQuestions.length > 0) {
+            e.preventDefault();
+            
+            // Fazer scroll até a primeira questão faltante
+            const firstMissing = document.querySelectorAll('.question-block')[missingQuestions[0] - 1];
+            firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Mostrar alerta
+            alert(`Por favor, responda todas as questões obrigatórias.\n\nQuestões faltantes: ${missingQuestions.join(', ')}`);
+        }
+    });
+    
+    // Remover highlight quando responder
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const questionBlock = this.closest('.question-block');
+            questionBlock.style.border = '';
+            questionBlock.style.background = '';
+        });
+    });
+});
+</script>
 {% endblock %}
