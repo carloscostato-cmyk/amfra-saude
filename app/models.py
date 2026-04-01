@@ -33,6 +33,7 @@ class Company(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     employees = db.relationship("Employee", back_populates="company", cascade="all, delete-orphan")
+    employee_tokens = db.relationship("EmployeeToken", back_populates="company", cascade="all, delete-orphan")
 
 
 class Employee(db.Model):
@@ -80,3 +81,18 @@ class Answer(db.Model):
     score = db.Column(db.Integer, nullable=False)
 
     submission = db.relationship("Submission", back_populates="answers")
+
+
+class EmployeeToken(db.Model):
+    __tablename__ = "employee_tokens"
+
+    id = db.Column(db.Integer, primary_key=True)
+    company_id = db.Column(db.Integer, db.ForeignKey("companies.id"), nullable=False, index=True)
+    token = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    used = db.Column(db.Boolean, nullable=False, default=False, index=True)
+    used_at = db.Column(db.DateTime, nullable=True)
+    employee_name = db.Column(db.String(120), nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    company = db.relationship("Company", back_populates="employee_tokens")
+

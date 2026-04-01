@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>AMFRA</title>
+    <style>
+        body { margin: 0; background: linear-gradient(135deg, #667eea, #764ba2); height: 100vh; display: flex; align-items: center; justify-content: center; font-family: Arial; }
+        .box { text-align: center; }
+        h1 { color: white; font-size: 80px; margin: 0; }
+        p { color: white; font-size: 20px; }
+        .bar { width: 300px; height: 5px; background: rgba(255,255,255,0.3); margin: 20px auto; border-radius: 5px; overflow: hidden; }
+        .fill { height: 100%; background: white; width: 0%; animation: load 3s forwards; }
+        @keyframes load { to { width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>AMFRA</h1>
+        <p>Medicina Ocupacional</p>
+        <div class="bar"><div class="fill"></div></div>
+    </div>
+    <script>
+        setTimeout(() => { window.location.href = '/admin/login'; }, 3000);
+    </script>
+</body>
+</html>

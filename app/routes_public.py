@@ -15,12 +15,34 @@ public_bp = Blueprint("public", __name__)
 def index():
     if current_user.is_authenticated:
         return redirect(url_for("admin.dashboard"))
-    return redirect(url_for("admin.login"))
+    return redirect(url_for("public.loading"))
+
+
+@public_bp.get("/loading")
+def loading():
+    return render_template("loading_amfra.html")
 
 
 @public_bp.route("/q/<company_token>", methods=["GET", "POST"])
 def questionnaire(company_token):
-    company = Company.query.filter_by(token=company_token).first_or_404()
+    # Buscar pelo token individual do colaborador
+    from .models import EmployeeToken
+    employee_token = EmployeeToken.query.filter_by(token=company_token).first()
+    
+    if not employee_token:
+        # Fallback: tentar buscar como token antigo da empresa (compatibilidade)
+        company = Company.query.filter_by(token=company_token).first()
+        if not company:
+            flash("Link inválido ou expirado.", "error")
+            return render_template("errors/404.html"), 404
+    else:
+        # Verificar se o token já foi usado
+        if employee_token.used:
+            flash(f"Este link já foi utilizado por {employee_token.employee_name} em {employee_token.used_at.strftime('%d/%m/%Y às %H:%M')}.", "warning")
+            return render_template("thank_you.html", body_class="page-thank-you")
+        
+        company = employee_token.company
+    
     form = PublicQuestionnaireForm()
     question_pairs = list(zip(QUESTION_DEFINITIONS, form.question_fields))
 
@@ -66,6 +88,13 @@ def questionnaire(company_token):
             )
 
         db.session.add(submission)
+        
+        # Marcar token como usado (se for token individual)
+        if employee_token:
+            employee_token.used = True
+            employee_token.used_at = datetime.utcnow()
+            employee_token.employee_name = f"{form.first_name.data.strip()} {form.last_name.data.strip()}"
+        
         db.session.commit()
 
         return redirect(url_for("public.thank_you"))

@@ -21,18 +21,71 @@
 
     <section class="admin-actions" style="margin-top: 2rem;">
         <article class="action-panel action-panel--highlight" style="background: rgba(37,99,235,0.03); border: 1px dashed rgba(37,99,235,0.2); box-shadow: none;">
-            <span class="section-kicker" style="color: var(--accent);">Porta de Entrada (B2B2C)</span>
-            <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Link Exclusivo para os Colaboradores - {{ company.name }}</h2>
-            <p style="max-width: 800px;">Os funcionários dessa empresa só podem responder ao questionário através do link imutável exibido abaixo. Entregue este link ao RH deles para dispararem as campanhas de resposta.</p>
+            <span class="section-kicker" style="color: var(--accent);">🔐 Sistema de Tokens Individuais</span>
+            <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Links Únicos por Colaborador - {{ company.name }}</h2>
+            <p style="max-width: 800px;">Cada colaborador recebe um link único e individual. Cada link só pode ser usado uma vez. Distribua os links abaixo para cada funcionário.</p>
             
-            <div style="display: flex; gap: 1rem; margin-top: 1rem; max-width: 800px;">
-                <div class="share-link-box" id="questionnaireLink" style="padding: 0.8rem 1.2rem; margin: 0; flex: 1; display: flex; align-items: center; border-color: rgba(37,99,235,0.3); background: #ffffff;">{{ public_url }}</div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: white; border-radius: 8px; border: 1px solid rgba(37,99,235,0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <strong style="font-size: 1.1rem;">Status dos Tokens</strong>
+                    <span style="font-size: 1.2rem; font-weight: 700; color: {{ 'var(--success)' if tokens_used < company.employee_count else 'var(--danger)' }};">
+                        {{ tokens_used }} / {{ company.employee_count }} usados
+                    </span>
+                </div>
                 
-                <button type="button" class="button button--primary" id="copyLinkBtn" data-copy-text="{{ public_url }}">
-                    <span class="btn-text">Copiar Link</span>
-                    <span class="btn-text-copied" style="display:none;">✓ Copiado</span>
-                </button>
-                <a class="button button--ghost" href="{{ public_url }}" target="_blank" rel="noopener noreferrer">Acessar Form</a>
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px;">
+                    <table class="data-table" style="margin: 0; box-shadow: none;">
+                        <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 10;">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Status</th>
+                                <th>Usado por</th>
+                                <th>Data de Uso</th>
+                                <th style="text-align: right;">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for token in employee_tokens %}
+                            <tr style="background: {{ '#f9fafb' if token.used else 'white' }};">
+                                <td style="font-weight: 600; color: var(--text-soft);">{{ loop.index }}</td>
+                                <td>
+                                    {% if token.used %}
+                                        <span class="classification-badge" style="background:#fee2e2; color:#dc2626; border: 1px solid #fecaca; border-radius: 99px; padding: 4px 12px; font-weight: 700; font-size: 0.85rem;">✓ Usado</span>
+                                    {% else %}
+                                        <span class="classification-badge" style="background:#ecfdf5; color:#059669; border: 1px solid #a7f3d0; border-radius: 99px; padding: 4px 12px; font-weight: 700; font-size: 0.85rem;">✓ Disponível</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if token.used %}
+                                        <strong>{{ token.employee_name }}</strong>
+                                    {% else %}
+                                        <span style="color: var(--text-soft); font-style: italic;">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if token.used %}
+                                        {{ token.used_at.strftime("%d/%m/%Y %H:%M") }}
+                                    {% else %}
+                                        <span style="color: var(--text-soft); font-style: italic;">-</span>
+                                    {% endif %}
+                                </td>
+                                <td style="text-align: right;">
+                                    {% if not token.used %}
+                                        <button type="button" class="button button--compact button--primary copy-token-btn" 
+                                                data-token-url="{{ request.url_root }}q/{{ token.token }}"
+                                                style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+                                            <span class="btn-text">Copiar Link</span>
+                                            <span class="btn-text-copied" style="display:none;">✓ Copiado</span>
+                                        </button>
+                                    {% else %}
+                                        <span style="color: var(--text-soft); font-size: 0.85rem;">Link expirado</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </article>
     </section>
@@ -101,6 +154,7 @@
 </section>
 
 <script>
+// Copiar link do token antigo (compatibilidade)
 const copyLinkBtn = document.getElementById('copyLinkBtn');
 if (copyLinkBtn) {
     copyLinkBtn.addEventListener('click', () => {
@@ -113,5 +167,24 @@ if (copyLinkBtn) {
         }, 2000);
     });
 }
+
+// Copiar links individuais dos tokens
+document.querySelectorAll('.copy-token-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const url = this.dataset.tokenUrl;
+        navigator.clipboard.writeText(url);
+        
+        const btnText = this.querySelector('.btn-text');
+        const btnCopied = this.querySelector('.btn-text-copied');
+        
+        btnText.style.display = 'none';
+        btnCopied.style.display = 'inline';
+        
+        setTimeout(() => {
+            btnText.style.display = 'inline';
+            btnCopied.style.display = 'none';
+        }, 2000);
+    });
+});
 </script>
 {% endblock %}

@@ -109,9 +109,20 @@ def company_new():
             token=token,
         )
         db.session.add(company)
+        db.session.flush()  # Garante que company.id está disponível
+        
+        # Gerar tokens individuais para cada colaborador
+        from .models import EmployeeToken
+        for i in range(form.employee_count.data):
+            employee_token = EmployeeToken(
+                company_id=company.id,
+                token=secrets.token_urlsafe(16)
+            )
+            db.session.add(employee_token)
+        
         db.session.commit()
-        flash("Empresa cadastrada com sucesso.", "success")
-        return redirect(url_for("admin.company_list"))
+        flash(f"Empresa cadastrada com sucesso. {form.employee_count.data} tokens individuais foram gerados.", "success")
+        return redirect(url_for("admin.company_detail", company_id=company.id))
 
     return render_template("admin_company_form.html", form=form, title="Nova Empresa", body_class="page-admin-dashboard")
 
@@ -119,15 +130,26 @@ def company_new():
 @admin_bp.route("/company/<int:company_id>", methods=["GET"])
 @login_required
 def company_detail(company_id):
+    from .models import EmployeeToken
     company = Company.query.get_or_404(company_id)
     public_url = build_public_questionnaire_url(company)
     employees = Employee.query.filter_by(company_id=company.id).all()
+    
+    # Buscar todos os tokens individuais
+    employee_tokens = EmployeeToken.query.filter_by(company_id=company.id).order_by(EmployeeToken.created_at).all()
+    
+    # Calcular estatísticas
+    tokens_used = sum(1 for t in employee_tokens if t.used)
+    tokens_available = len(employee_tokens) - tokens_used
     
     return render_template(
         "admin_company_detail.html",
         company=company,
         employees=employees,
         public_url=public_url,
+        employee_tokens=employee_tokens,
+        tokens_used=tokens_used,
+        tokens_available=tokens_available,
         body_class="page-admin-dashboard",
     )
 
