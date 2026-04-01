@@ -261,3 +261,30 @@ def submission_detail_advanced(submission_id):
         body_class="page-admin-detail-advanced",
     )
 
+
+@admin_bp.get("/migrate")
+@login_required
+def migrate_database():
+    """Rota temporária para executar migração do banco de dados"""
+    from app.models import EmployeeToken
+    from sqlalchemy import inspect
+    
+    try:
+        # Criar tabela employee_tokens
+        db.create_all()
+        
+        # Verificar se a tabela foi criada
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+        
+        if 'employee_tokens' in tables:
+            columns = [col['name'] for col in inspector.get_columns('employee_tokens')]
+            flash(f"✅ Migração concluída! Tabela 'employee_tokens' criada com colunas: {', '.join(columns)}", "success")
+        else:
+            flash("❌ Erro: Tabela 'employee_tokens' não foi criada!", "error")
+            
+    except Exception as e:
+        flash(f"❌ Erro na migração: {str(e)}", "error")
+    
+    return redirect(url_for("admin.company_list"))
+
