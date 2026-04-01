@@ -1284,6 +1284,22 @@ h3 {
         display: none;
     }
 
+    /* Fix para botões de ação no dashboard mobile */
+    .data-table td[style*="white-space: nowrap"] {
+        white-space: normal !important;
+    }
+
+    .data-table td > div[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+
+    .data-table .button--compact {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
     .answer-item {
         grid-template-columns: 1fr;
     }
