@@ -112,53 +112,88 @@
     </section>
 </section>
 
+<!-- Banner de questões faltantes -->
+<div id="missingQuestionsBanner" style="display: none; position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 1000; background: #fef2f2; border: 2px solid #dc2626; border-radius: 12px; padding: 1rem 1.5rem; box-shadow: 0 10px 40px rgba(220, 38, 38, 0.3); max-width: 90%; width: 600px;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="font-size: 1.5rem;">⚠️</span>
+        <div style="flex: 1;">
+            <strong style="display: block; color: #dc2626; font-size: 1.1rem; margin-bottom: 0.25rem;">Questões obrigatórias não respondidas</strong>
+            <p id="missingQuestionsText" style="margin: 0; color: #991b1b; font-size: 0.95rem;"></p>
+        </div>
+        <button onclick="document.getElementById('missingQuestionsBanner').style.display='none'" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #dc2626; padding: 0; line-height: 1;">×</button>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.assessment-form');
     const submitBtn = document.getElementById('submitBtn');
+    const banner = document.getElementById('missingQuestionsBanner');
+    const bannerText = document.getElementById('missingQuestionsText');
     
     form.addEventListener('submit', function(e) {
         // Remover highlights anteriores
         document.querySelectorAll('.question-block').forEach(block => {
             block.style.border = '';
             block.style.background = '';
+            block.style.transition = 'all 0.3s ease';
         });
+        
+        // Esconder banner
+        banner.style.display = 'none';
         
         // Verificar quais questões não foram respondidas
         const missingQuestions = [];
         const questionBlocks = document.querySelectorAll('.question-block');
         
         questionBlocks.forEach((block, index) => {
-            const inputs = block.querySelectorAll('input[type="radio"]');
+            // Pegar o número da questão do elemento
+            const questionNumber = block.querySelector('.question-block__number').textContent.trim();
+            const inputs = block.querySelectorAll('input[type="radio"], input[type="checkbox"], input.choice-card__input');
             const isAnswered = Array.from(inputs).some(input => input.checked);
             
             if (!isAnswered) {
-                missingQuestions.push(index + 1);
-                // Destacar em vermelho
-                block.style.border = '2px solid #dc2626';
+                missingQuestions.push(questionNumber);
+                // Destacar em vermelho com animação
+                block.style.border = '3px solid #dc2626';
                 block.style.background = '#fef2f2';
+                block.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.2)';
             }
         });
         
-        // Se houver questões faltando, prevenir submit e fazer scroll
+        // Se houver questões faltando, prevenir submit e mostrar banner
         if (missingQuestions.length > 0) {
             e.preventDefault();
             
-            // Fazer scroll até a primeira questão faltante
-            const firstMissing = document.querySelectorAll('.question-block')[missingQuestions[0] - 1];
-            firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Mostrar banner no topo
+            bannerText.textContent = `Faltam ${missingQuestions.length} questão(ões): ${missingQuestions.join(', ')}`;
+            banner.style.display = 'block';
             
-            // Mostrar alerta
-            alert(`Por favor, responda todas as questões obrigatórias.\n\nQuestões faltantes: ${missingQuestions.join(', ')}`);
+            // Fazer scroll até o topo para ver o banner
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Após 1 segundo, fazer scroll até a primeira questão faltante
+            setTimeout(() => {
+                const firstMissingNumber = missingQuestions[0];
+                const firstMissing = Array.from(questionBlocks).find(block => 
+                    block.querySelector('.question-block__number').textContent.trim() === firstMissingNumber
+                );
+                if (firstMissing) {
+                    firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 1500);
         }
     });
     
     // Remover highlight quando responder
-    document.querySelectorAll('input[type="radio"]').forEach(input => {
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"], input.choice-card__input').forEach(input => {
         input.addEventListener('change', function() {
             const questionBlock = this.closest('.question-block');
-            questionBlock.style.border = '';
-            questionBlock.style.background = '';
+            if (questionBlock) {
+                questionBlock.style.border = '';
+                questionBlock.style.background = '';
+                questionBlock.style.boxShadow = '';
+            }
         });
     });
 });
