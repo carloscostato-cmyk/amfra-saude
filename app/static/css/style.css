@@ -360,6 +360,7 @@ h3 {
 .admin-shell__brand {
     flex: 1;
     min-width: 300px;
+    text-align: center;
 }
 
 .lede--dark {
