@@ -131,12 +131,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const banner = document.getElementById('missingQuestionsBanner');
     const bannerText = document.getElementById('missingQuestionsText');
     
+    console.log('Validação de questionário carregada');
+    
     form.addEventListener('submit', function(e) {
+        console.log('Formulário submetido - iniciando validação');
+        
         // Remover highlights anteriores
         document.querySelectorAll('.question-block').forEach(block => {
             block.style.border = '';
             block.style.background = '';
+            block.style.boxShadow = '';
             block.style.transition = 'all 0.3s ease';
+            
+            // Remover classe de erro do número
+            const numberEl = block.querySelector('.question-block__number');
+            if (numberEl) {
+                numberEl.style.background = '';
+                numberEl.style.color = '';
+            }
         });
         
         // Esconder banner
@@ -146,56 +158,87 @@ document.addEventListener('DOMContentLoaded', function() {
         const missingQuestions = [];
         const questionBlocks = document.querySelectorAll('.question-block');
         
+        console.log(`Total de questões encontradas: ${questionBlocks.length}`);
+        
         questionBlocks.forEach((block, index) => {
             // Pegar o número da questão do elemento
-            const questionNumber = block.querySelector('.question-block__number').textContent.trim();
-            const inputs = block.querySelectorAll('input[type="radio"], input[type="checkbox"], input.choice-card__input');
+            const questionNumberEl = block.querySelector('.question-block__number');
+            const questionNumber = questionNumberEl ? questionNumberEl.textContent.trim() : (index + 1).toString().padStart(2, '0');
+            
+            // Buscar todos os inputs dentro do bloco
+            const inputs = block.querySelectorAll('input[type="radio"]');
             const isAnswered = Array.from(inputs).some(input => input.checked);
+            
+            console.log(`Questão ${questionNumber}: ${isAnswered ? 'Respondida' : 'NÃO RESPONDIDA'}`);
             
             if (!isAnswered) {
                 missingQuestions.push(questionNumber);
-                // Destacar em vermelho com animação
+                
+                // Destacar o bloco inteiro em vermelho
                 block.style.border = '3px solid #dc2626';
                 block.style.background = '#fef2f2';
                 block.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.2)';
+                
+                // Destacar o número da questão em vermelho
+                if (questionNumberEl) {
+                    questionNumberEl.style.background = '#dc2626';
+                    questionNumberEl.style.color = '#ffffff';
+                }
             }
         });
         
         // Se houver questões faltando, prevenir submit e mostrar banner
         if (missingQuestions.length > 0) {
             e.preventDefault();
+            console.log(`VALIDAÇÃO FALHOU - Questões faltantes: ${missingQuestions.join(', ')}`);
             
             // Mostrar banner no topo
-            bannerText.textContent = `Faltam ${missingQuestions.length} questão(ões): ${missingQuestions.join(', ')}`;
+            bannerText.textContent = `Por favor, responda ${missingQuestions.length === 1 ? 'a questão' : 'as questões'}: ${missingQuestions.join(', ')}`;
             banner.style.display = 'block';
             
             // Fazer scroll até o topo para ver o banner
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Após 1 segundo, fazer scroll até a primeira questão faltante
+            // Após 1.5 segundos, fazer scroll até a primeira questão faltante
             setTimeout(() => {
                 const firstMissingNumber = missingQuestions[0];
-                const firstMissing = Array.from(questionBlocks).find(block => 
-                    block.querySelector('.question-block__number').textContent.trim() === firstMissingNumber
-                );
+                const firstMissing = Array.from(questionBlocks).find(block => {
+                    const num = block.querySelector('.question-block__number');
+                    return num && num.textContent.trim() === firstMissingNumber;
+                });
+                
                 if (firstMissing) {
+                    console.log(`Fazendo scroll até a questão ${firstMissingNumber}`);
                     firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 1500);
+            
+            return false;
+        } else {
+            console.log('VALIDAÇÃO OK - Todas as questões respondidas');
         }
     });
     
     // Remover highlight quando responder
-    document.querySelectorAll('input[type="radio"], input[type="checkbox"], input.choice-card__input').forEach(input => {
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
         input.addEventListener('change', function() {
             const questionBlock = this.closest('.question-block');
             if (questionBlock) {
                 questionBlock.style.border = '';
                 questionBlock.style.background = '';
                 questionBlock.style.boxShadow = '';
+                
+                // Remover destaque do número
+                const numberEl = questionBlock.querySelector('.question-block__number');
+                if (numberEl) {
+                    numberEl.style.background = '';
+                    numberEl.style.color = '';
+                }
             }
         });
     });
+    
+    console.log('Event listeners configurados');
 });
 </script>
 {% endblock %}
