@@ -78,7 +78,12 @@
                                             <span class="btn-text-copied" style="display:none;">✓ Copiado</span>
                                         </button>
                                     {% else %}
-                                        <span style="color: var(--text-soft); font-size: 0.85rem;">Link expirado</span>
+                                        <button type="button" 
+                                                class="button button--compact button--disabled" 
+                                                disabled
+                                                style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+                                            Link Expirado
+                                        </button>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -170,20 +175,47 @@ if (copyLinkBtn) {
 
 // Copiar links individuais dos tokens
 document.querySelectorAll('.copy-token-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    let resetTimeout = null;
+    
+    btn.addEventListener('click', async function() {
         const url = this.dataset.tokenUrl;
-        navigator.clipboard.writeText(url);
         
+        // Defensive checks for DOM elements
         const btnText = this.querySelector('.btn-text');
         const btnCopied = this.querySelector('.btn-text-copied');
         
-        btnText.style.display = 'none';
-        btnCopied.style.display = 'inline';
+        if (!btnText || !btnCopied) {
+            console.error('Button text elements not found');
+            return;
+        }
         
-        setTimeout(() => {
-            btnText.style.display = 'inline';
-            btnCopied.style.display = 'none';
-        }, 2000);
+        // Clear any existing timeout to prevent race conditions
+        if (resetTimeout) {
+            clearTimeout(resetTimeout);
+        }
+        
+        try {
+            await navigator.clipboard.writeText(url);
+            
+            // Add success state class
+            this.classList.add('button--success');
+            this.classList.remove('button--primary');
+            
+            // Toggle text visibility
+            btnText.style.display = 'none';
+            btnCopied.style.display = 'inline';
+            
+            // Reset after 2 seconds
+            resetTimeout = setTimeout(() => {
+                this.classList.remove('button--success');
+                this.classList.add('button--primary');
+                btnText.style.display = 'inline';
+                btnCopied.style.display = 'none';
+                resetTimeout = null;
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
     });
 });
 </script>

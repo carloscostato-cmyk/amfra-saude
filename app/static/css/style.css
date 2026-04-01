@@ -1801,3 +1801,25 @@ h3 {
 .chart-container:nth-child(4) { animation-delay: 0.4s; }
 .chart-container:nth-child(5) { animation-delay: 0.5s; }
 
+
+/* Copy Link Button States - Feature: copy-link-button-improvements */
+.button--success {
+    background: linear-gradient(135deg, var(--healthy) 0%, #1f5d51 100%) !important;
+    color: var(--text-inverse) !important;
+    box-shadow: 0 16px 34px rgba(47, 118, 103, 0.35) !important;
+    transition: all 0.3s ease;
+}
+
+.button--disabled {
+    background: #e5e7eb !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+    box-shadow: none !important;
+    border-color: #d1d5db !important;
+}
+
+.button--disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
