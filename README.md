@@ -1,273 +1,405 @@
-# APP AMFRA
+# AMFRA Saúde Mental - Sistema de Avaliação Psicossocial NR-1 (HSE-IT)
 
-Sistema web completo para transformar um questionário clínico em uma aplicação real com:
+Sistema web profissional para avaliação de riscos psicossociais em ambientes de trabalho, baseado no questionário HSE-IT (Health Safety Executive Indicator Tool) com 35 perguntas e 7 dimensões psicossociais, em conformidade com a NR-1.
 
-- formulário público responsivo para o paciente
-- painel administrativo protegido para o Doutor
-- scoring automático com classificação clínica
-- gráfico horizontal por pergunta com Chart.js
-- persistência em banco relacional
-- estrutura pronta para usar SQLite localmente e PostgreSQL em produção
-- integração desacoplada com WhatsApp Cloud API da Meta, com fallback controlado
+## 🎯 Funcionalidades Principais
 
-## Stack
+### Avaliação Psicossocial
+- ✅ **Questionário HSE-IT completo** (35 perguntas, escala Likert 1-5)
+- ✅ **7 dimensões psicossociais**: Demandas, Controle, Apoio da Chefia, Apoio dos Colegas, Relacionamentos, Cargo, Comunicação e Mudanças
+- ✅ **Scoring automático** com classificação em 3 níveis (BAIXO, MÉDIO, ALTO)
+- ✅ **Análise dimensional** detalhada por dimensão e questão
+- ✅ **Validação de formulário** com destaque visual de erros
 
-- Python 3
-- Flask
-- Jinja2
-- Flask-SQLAlchemy
-- Flask-WTF
-- Flask-Login
-- SQLite no local
-- PostgreSQL em produção via `DATABASE_URL`
-- Chart.js
-- HTML5, CSS3 e JavaScript
+### Gestão Empresarial
+- ✅ **Gestão de empresas** com tokens únicos
+- ✅ **Gestão de colaboradores** com tokens individuais
+- ✅ **Relatórios NR-1** consolidados por empresa
+- ✅ **Análise de participação** e distribuição de riscos
 
-## Estrutura
+### Visualização e Relatórios
+- ✅ **Gráficos profissionais** (barras horizontais + radar Chart.js)
+- ✅ **Gráfico consolidado NR-1** com distribuição de riscos por empresa
+- ✅ **Geração de PDF** profissional com rodapé e branding
+- ✅ **Interface responsiva** (desktop e mobile)
 
-```text
-app/
-  __init__.py
-  extensions.py
-  forms.py
-  models.py
-  questionnaire.py
-  routes_admin.py
-  routes_public.py
-  services/
-    __init__.py
-    links.py
-    scoring.py
-    whatsapp.py
-  templates/
-    base.html
-    public_form.html
-    thank_you.html
-    admin_login.html
-    admin_dashboard.html
-    admin_submission_detail.html
-    errors/
-      404.html
-      500.html
-  static/
-    css/
-      style.css
-    js/
-      main.js
-      submission_detail.js
-    img/
-config.py
-run.py
-requirements.txt
-.env.example
-README.md
+### Administração
+- ✅ **Painel administrativo** protegido com autenticação
+- ✅ **Dashboard** com visão geral de empresas e submissões
+- ✅ **Detalhamento individual** de cada avaliação
+- ✅ **Links compartilháveis** para questionários
+
+## 🏗️ Arquitetura e Tecnologias
+
+### Backend
+- **Python 3.10+**
+- **Flask 3.0** - Framework web
+- **Flask-SQLAlchemy** - ORM para banco de dados
+- **Flask-Login** - Autenticação de usuários
+- **Flask-WTF** - Formulários e proteção CSRF
+- **Gunicorn** - Servidor WSGI para produção
+
+### Frontend
+- **Jinja2** - Template engine
+- **HTML5, CSS3** - Interface responsiva
+- **JavaScript (ES6+)** - Interatividade
+- **Chart.js 4.4.2** - Gráficos profissionais
+- **chartjs-plugin-datalabels 2.2.0** - Labels em gráficos
+
+### Banco de Dados
+- **SQLite** - Desenvolvimento local
+- **PostgreSQL** - Produção (via DATABASE_URL)
+
+## 📁 Estrutura do Projeto
+
+```
+amfra-saude-mental/
+├── app/
+│   ├── __init__.py              # Factory da aplicação Flask
+│   ├── extensions.py            # Extensões (db, csrf, login_manager)
+│   ├── models.py                # Modelos do banco (Company, Employee, Submission, Answer)
+│   ├── forms.py                 # Formulários WTForms
+│   ├── questionnaire.py         # Definição do HSE-IT (35 perguntas, dimensões)
+│   ├── routes_admin.py          # Rotas administrativas
+│   ├── routes_public.py         # Rotas públicas (questionário)
+│   ├── services/
+│   │   ├── nr1_agent.py         # Análise consolidada NR-1
+│   │   ├── scoring.py           # Cálculo de scores e classificações
+│   │   └── links.py             # Geração de URLs
+│   ├── templates/
+│   │   ├── base.html            # Template base
+│   │   ├── public_form.html     # Formulário público
+│   │   ├── thank_you.html       # Página de agradecimento
+│   │   ├── admin_login.html     # Login administrativo
+│   │   ├── admin_dashboard.html # Dashboard principal
+│   │   ├── admin_company_detail.html      # Detalhes da empresa
+│   │   ├── admin_company_nr1.html         # Relatório NR-1
+│   │   ├── admin_submission_detail.html   # Detalhes da submissão
+│   │   └── errors/              # Páginas de erro (404, 500)
+│   └── static/
+│       ├── css/
+│       │   └── style.css        # Estilos principais
+│       ├── js/
+│       │   ├── main.js          # Scripts gerais
+│       │   └── submission_detail.js  # Scripts de detalhes
+│       └── img/                 # Imagens e logos
+├── instance/
+│   ├── app_narcista.db          # Banco SQLite (local)
+│   └── logs/                    # Logs da aplicação
+├── .kiro/
+│   └── specs/                   # Especificações de features
+├── config.py                    # Configurações da aplicação
+├── run.py                       # Ponto de entrada (desenvolvimento)
+├── requirements.txt             # Dependências Python
+├── .env.example                 # Exemplo de variáveis de ambiente
+├── README.md                    # Este arquivo
+├── IMPORTANTE_LEIA_ANTES_DE_USAR.md  # Guia rápido de produção
+├── CONFIGURACAO_PRODUCAO.md     # Guia detalhado de deploy
+└── DOCUMENTACAO_PARA_IA.md      # Guia para IAs trabalharem no projeto
 ```
 
-## Regras implementadas
+## 🚀 Como Executar Localmente
 
-- 10 perguntas
-- 4 alternativas por pergunta
-- pontuação fixa:
-  - A = 1
-  - B = 2
-  - C = 3
-  - D = 4
-- classificação:
-  - 10 a 15 = `RELACIONAMENTO SAUDÁVEL`
-  - 16 a 25 = `ATENÇÃO: PADRÕES PREOCUPANTES`
-  - 26 a 35 = `ALERTA: SINAIS NARCÍSICOS SIGNIFICATIVOS`
-  - 36 a 40 = `CRÍTICO: ABUSO NARCÍSICO — INTERVENÇÃO NECESSÁRIA`
+### 1. Pré-requisitos
+- Python 3.10 ou superior
+- pip (gerenciador de pacotes Python)
 
-## Novidades: Gráfico Consolidado NR-1 📊
-
-A partir de 2024, o sistema inclui um **gráfico consolidado de distribuição de riscos** na página de relatório NR-1 da empresa.
-
-### Características:
-- 📊 Gráfico de barras horizontais
-- 🎨 Cores intuitivas: vermelho (BAIXO), amarelo (MÉDIO), verde (ALTO)
-- 📈 Exibe contagem e percentual para cada nível
-- 📱 Totalmente responsivo (desktop e mobile)
-- ♿ Acessível (ARIA labels, screen readers)
-- ⚡ Rápido (< 500ms de renderização)
-
-### Tecnologias:
-- Chart.js 4.4.2
-- chartjs-plugin-datalabels 2.2.0
-
-### Documentação:
-- Resumo: `RESUMO_GRAFICO_NR1.md`
-- Deploy: `DEPLOY_GRAFICO_NR1.md`
-- Documentação completa: `.kiro/specs/company-consolidated-nr1-chart/`
-
-### Teste:
+### 2. Clonar o repositório
 ```bash
-python test_consolidated_chart.py
+git clone <url-do-repositorio>
+cd amfra-saude-mental
 ```
 
-
-## Modelos principais
-
-- `AdminUser`
-- `Submission`
-- `Answer`
-- `NotificationLog`
-
-## Segurança e privacidade
-
-- proteção CSRF em formulários e logout
-- autenticação administrativa com senha em hash
-- sessões protegidas
-- link administrativo com UUID + token seguro não enumerável
-- validação server-side
-- segredos via variáveis de ambiente
-- logs sem exposição de tokens da API
-- fallback controlado para falhas externas do WhatsApp
-
-## Como executar localmente
-
-### 1. Criar ambiente virtual
-
-No PowerShell:
-
+### 3. Criar ambiente virtual
 ```powershell
+# Windows PowerShell
 py -3 -m venv .venv
 .venv\Scripts\Activate.ps1
+
+# Linux/Mac
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-### 2. Instalar dependências
-
-```powershell
+### 4. Instalar dependências
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configurar variáveis de ambiente
+### 5. Configurar variáveis de ambiente
+```bash
+# Copiar arquivo de exemplo
+cp .env.example .env
 
-```powershell
-Copy-Item .env.example .env
+# Editar .env com suas configurações
 ```
 
-Edite o arquivo `.env` com pelo menos:
-
-- `SECRET_KEY`
-- `ADMIN_USERNAME`
-- `ADMIN_PASSWORD`
-
-Se quiser que o admin seja criado automaticamente no boot local:
-
-- defina `AUTO_SEED_ADMIN=true`
-
-### 4. Rodar a aplicação
-
-Recomendado (Windows, production-capable):
-
-```powershell
-python serve.py
+Variáveis mínimas necessárias:
+```env
+SECRET_KEY=sua-chave-secreta-forte-aqui
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=senha-forte-aqui
+AUTO_SEED_ADMIN=true
 ```
 
-Fallback (development builtin server):
-
-```powershell
-python run.py
-```
-
-Por padrão o app sobe em:
-
-- [http://127.0.0.1:5000](http://127.0.0.1:5000)
-
-## Comandos úteis
-
-Inicializar o banco manualmente:
-
-```powershell
+### 6. Inicializar banco de dados
+```bash
 flask --app run.py init-db
 ```
 
-Criar administrador manualmente:
+### 7. Rodar a aplicação
+```bash
+# Desenvolvimento
+python run.py
 
-```powershell
+# Produção (recomendado)
+gunicorn -w 4 -b 0.0.0.0:5000 "app:create_app()"
+```
+
+A aplicação estará disponível em: http://127.0.0.1:5000
+
+## 📊 Modelo de Dados
+
+### Principais Entidades
+
+**Company** (Empresa)
+- `id`: Identificador único
+- `name`: Nome da empresa
+- `employee_count`: Número de colaboradores
+- `token`: Token único para acesso ao questionário
+- `created_at`: Data de criação
+
+**Employee** (Colaborador)
+- `id`: Identificador único
+- `company_id`: Referência à empresa
+- `first_name`: Primeiro nome
+- `last_name`: Sobrenome
+- `created_at`: Data de criação
+
+**Submission** (Submissão)
+- `id`: Identificador único
+- `employee_id`: Referência ao colaborador
+- `questionnaire_date`: Data do preenchimento
+- `total_score`: Pontuação total (soma bruta)
+- `classification`: Classificação (BAIXO, MÉDIO, ALTO)
+- `interpretation`: Interpretação textual
+- `created_at`: Data de criação
+
+**Answer** (Resposta)
+- `id`: Identificador único
+- `submission_id`: Referência à submissão
+- `question_number`: Número da questão (1-35)
+- `question_text`: Texto da questão
+- `selected_option`: Opção selecionada (1-5)
+- `selected_text`: Texto da opção
+- `score`: Pontuação (1-5)
+
+## 🎓 Metodologia HSE-IT
+
+### Escala Likert
+- **1** = Nunca
+- **2** = Raramente
+- **3** = Às vezes
+- **4** = Frequentemente
+- **5** = Sempre
+
+### Classificação por Média
+- **BAIXO**: 1,00 a 2,29 (risco alto, intervenção prioritária)
+- **MÉDIO**: 2,30 a 3,69 (risco moderado, atenção necessária)
+- **ALTO**: 3,70 a 5,00 (risco baixo, ambiente saudável)
+
+### 7 Dimensões Psicossociais
+
+1. **DEMANDAS** (8 questões): Carga de trabalho, prazos, intensidade
+2. **CONTROLE** (6 questões): Autonomia, flexibilidade, decisão
+3. **APOIO DA CHEFIA** (5 questões): Suporte, incentivo, comunicação
+4. **APOIO DOS COLEGAS** (4 questões): Colaboração, respeito, ajuda
+5. **RELACIONAMENTOS** (4 questões): Conflitos, perseguição, tensão
+6. **CARGO** (5 questões): Clareza de papéis, objetivos, responsabilidades
+7. **COMUNICAÇÃO E MUDANÇAS** (3 questões): Consulta, explicações, adaptação
+
+## 🔐 Segurança e Privacidade
+
+- ✅ Proteção CSRF em todos os formulários
+- ✅ Autenticação administrativa com senha em hash (Werkzeug)
+- ✅ Sessões protegidas com cookies HttpOnly
+- ✅ Tokens não enumeráveis (UUID)
+- ✅ Validação server-side de todos os inputs
+- ✅ Segredos via variáveis de ambiente
+- ✅ Logs sem exposição de dados sensíveis
+- ✅ Conformidade com LGPD (recomenda-se revisão legal)
+
+## 🌐 Deploy em Produção
+
+### Railway (Recomendado)
+
+1. **Criar conta no Railway**: https://railway.app
+2. **Criar novo projeto** e conectar repositório GitHub
+3. **Adicionar PostgreSQL** ao projeto
+4. **Configurar variáveis de ambiente**:
+   ```env
+   SECRET_KEY=<gerar-chave-forte>
+   ADMIN_USERNAME=admin
+   ADMIN_PASSWORD=<senha-forte>
+   APP_BASE_URL=https://seu-app.railway.app
+   PREFERRED_URL_SCHEME=https
+   SESSION_COOKIE_SECURE=true
+   DATABASE_URL=<fornecido-automaticamente-pelo-railway>
+   ```
+5. **Deploy automático** será feito a cada push
+
+### Outras Plataformas
+
+O sistema é compatível com:
+- Heroku
+- AWS Elastic Beanstalk
+- Google Cloud Run
+- Azure App Service
+- Qualquer servidor com Python 3.10+ e PostgreSQL
+
+Consulte `CONFIGURACAO_PRODUCAO.md` para detalhes.
+
+## 🔧 Comandos Úteis
+
+### Banco de Dados
+```bash
+# Inicializar banco
+flask --app run.py init-db
+
+# Recriar banco (APAGA TODOS OS DADOS)
+flask --app run.py repair-db
+
+# Criar administrador manualmente
 flask --app run.py seed-admin
 ```
 
-## Fluxo esperado
+### Desenvolvimento
+```bash
+# Rodar servidor de desenvolvimento
+python run.py
 
-1. O paciente acessa o formulário público.
-2. Preenche nome, data e as 10 respostas.
-3. O sistema salva `Submission` e `Answer`.
-4. O scoring calcula pontuação total, classificação e interpretação.
-5. O paciente é redirecionado para a página “Muito obrigado”.
-6. O serviço de WhatsApp tenta notificar o Doutor com link privado do detalhe.
-7. O Doutor entra na área admin, abre o detalhe e visualiza:
-   - respostas selecionadas
-   - score por pergunta
-   - score total
-   - classificação
-   - interpretação
-   - gráfico horizontal
+# Rodar com Gunicorn (produção)
+gunicorn -w 4 -b 0.0.0.0:5000 "app:create_app()"
 
-## Integração com WhatsApp Cloud API
-
-O envio é feito no back-end pelo serviço `WhatsAppService`.
-
-Se a API não estiver configurada:
-
-- o sistema continua funcionando
-- a submissão é salva normalmente
-- o envio é registrado como `pending_configuration` ou `disabled`
-- o histórico fica disponível em `NotificationLog`
-
-### Variáveis necessárias para ativar o envio real
-
-Preencha no `.env`:
-
-- `WHATSAPP_ENABLED=true`
-- `WHATSAPP_ACCESS_TOKEN=<token da Meta>`
-- `WHATSAPP_PHONE_NUMBER_ID=<phone number id do WhatsApp Business>`
-- `WHATSAPP_DESTINATION_NUMBER=5511985879829`
-
-O endpoint usado segue o padrão oficial:
-
-- `https://graph.facebook.com/<VERSAO>/<PHONE_NUMBER_ID>/messages`
-
-### Payload enviado
-
-Mensagem de texto para o Doutor com o seguinte formato:
-
-```text
-A avaliação RN1 de {NOME_DO_PACIENTE} foi respondida e está disponível para o Doutor em: {URL_PRIVADA_DA_RESPOSTA}
+# Ativar ambiente virtual
+.venv\Scripts\Activate.ps1  # Windows
+source .venv/bin/activate    # Linux/Mac
 ```
 
-## Banco local e produção
+## 📝 Fluxo de Uso
 
-### SQLite local
+### Para Colaboradores
+1. Receber link do questionário (via empresa)
+2. Acessar link com token único
+3. Preencher dados pessoais (nome, sobrenome)
+4. Responder 35 questões do HSE-IT
+5. Submeter formulário
+6. Visualizar página de agradecimento
 
-Por padrão, deixando `DATABASE_URL` vazio:
+### Para Administradores
+1. Acessar `/admin/login`
+2. Fazer login com credenciais
+3. Visualizar dashboard com empresas
+4. Criar/editar empresas
+5. Gerar tokens para colaboradores
+6. Visualizar submissões individuais
+7. Acessar relatório NR-1 consolidado
+8. Exportar PDF (se implementado)
 
-- o app usa automaticamente o arquivo local `instance/app_narcista.db`
-- caminhos relativos de SQLite também são normalizados para o diretório do projeto
+## 📈 Gráfico Consolidado NR-1
 
-### PostgreSQL em produção
+Recurso implementado para visualização da distribuição de riscos por empresa.
 
-Basta trocar:
+### Características
+- 📊 Gráfico de barras horizontais
+- 🎨 Cores intuitivas: vermelho (BAIXO), amarelo (MÉDIO), verde (ALTO)
+- 📈 Exibe contagem e percentual para cada nível
+- 📱 Totalmente responsivo
+- ♿ Acessível (ARIA labels)
+- ⚡ Renderização rápida (< 500ms)
 
-- `DATABASE_URL=postgresql+psycopg://usuario:senha@host:5432/banco`
+### Documentação Técnica
+- Especificação completa: `.kiro/specs/company-consolidated-nr1-chart/`
+- Design: `.kiro/specs/company-consolidated-nr1-chart/design.md`
+- Requisitos: `.kiro/specs/company-consolidated-nr1-chart/requirements.md`
 
-Nenhuma rota precisa ser alterada.
+## 🐛 Correções Recentes
 
-## Sugestão de teste local
+### PDF Print Fix
+- Correção de impressão de PDF com gráficos
+- Especificação: `.kiro/specs/nr1-pdf-print-fix/`
 
-1. Rode `python run.py`
-2. Abra [http://127.0.0.1:5000](http://127.0.0.1:5000)
-3. Envie um formulário com respostas variadas
-4. Acesse [http://127.0.0.1:5000/admin/login](http://127.0.0.1:5000/admin/login)
-5. Entre com o usuário admin configurado
-6. Abra a resposta recém-criada
-7. Confira tabela, score, classificação, interpretação e gráfico
-8. Valide o status da notificação do WhatsApp no detalhe da submissão
+### Mobile Button Overlap Fix
+- Correção de sobreposição de botões em mobile
+- Especificação: `.kiro/specs/mobile-button-overlap-fix/`
 
-## Observações de deploy
+### Copy Link Button Improvements
+- Melhorias no botão de copiar link
+- Especificação: `.kiro/specs/copy-link-button-improvements/`
 
-- use `SECRET_KEY` forte em produção
-- habilite `SESSION_COOKIE_SECURE=true` atrás de HTTPS
-- use PostgreSQL em produção
-- considere adicionar Flask-Migrate em um próximo passo para versionamento formal do schema
-- por lidar com dados sensíveis, revise base legal, retenção, consentimento e política de acesso conforme LGPD
+## 🤝 Contribuindo
+
+Para contribuir com o projeto:
+
+1. Leia `DOCUMENTACAO_PARA_IA.md` para entender padrões de código
+2. Crie uma branch para sua feature: `git checkout -b feature/nova-funcionalidade`
+3. Faça commit das mudanças: `git commit -m "feat: adicionar nova funcionalidade"`
+4. Push para a branch: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
+
+### Padrões de Commit
+- `feat:` Nova funcionalidade
+- `fix:` Correção de bug
+- `docs:` Documentação
+- `style:` Formatação
+- `refactor:` Refatoração
+- `test:` Testes
+- `chore:` Manutenção
+
+## 📚 Documentação Adicional
+
+- **IMPORTANTE_LEIA_ANTES_DE_USAR.md**: Guia rápido para configuração de produção
+- **CONFIGURACAO_PRODUCAO.md**: Guia detalhado de deploy e configuração
+- **DOCUMENTACAO_PARA_IA.md**: Guia para IAs trabalharem no projeto
+- **.kiro/specs/**: Especificações técnicas de features
+
+## 🆘 Suporte e Troubleshooting
+
+### Problema: Links com localhost sendo enviados
+**Solução**: Configure `APP_BASE_URL` no `.env` com o domínio/IP público
+
+### Problema: Banco de dados não inicializa
+**Solução**: Execute `flask --app run.py init-db`
+
+### Problema: Erro de autenticação
+**Solução**: Verifique `ADMIN_USERNAME` e `ADMIN_PASSWORD` no `.env`
+
+### Problema: Gráficos não aparecem
+**Solução**: Verifique se Chart.js está carregando (console do navegador)
+
+### Logs
+Verifique os logs em: `instance/logs/app_narcista.log`
+
+## 📄 Licença
+
+Este projeto é proprietário da AMFRA Saúde Mental LTDA.
+
+## 👥 Credenciais Padrão
+
+**IMPORTANTE**: Altere as credenciais padrão em produção!
+
+- **Usuário**: definido em `ADMIN_USERNAME` (.env)
+- **Senha**: definida em `ADMIN_PASSWORD` (.env)
+
+## 🔗 Links Úteis
+
+- **Documentação Flask**: https://flask.palletsprojects.com/
+- **Chart.js**: https://www.chartjs.org/
+- **HSE-IT**: https://www.hse.gov.uk/stress/standards/
+- **NR-1**: https://www.gov.br/trabalho-e-previdencia/pt-br/composicao/orgaos-especificos/secretaria-de-trabalho/inspecao/seguranca-e-saude-no-trabalho/normas-regulamentadoras/nr-01.pdf
+
+---
+
+**Desenvolvido para**: AMFRA Saúde Mental LTDA  
+**Versão**: 2.0  
+**Última atualização**: 2024

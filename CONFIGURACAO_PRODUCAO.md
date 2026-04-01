@@ -1,227 +1,577 @@
-# 🚀 Configuração para Produção - AMFRA
+# 🚀 Configuração para Produção - AMFRA Saúde Mental
 
-## ⚠️ IMPORTANTE: Configuração de URLs
+Guia completo para configurar e fazer deploy do sistema AMFRA em ambiente de produção.
 
-O sistema usa a variável `APP_BASE_URL` para gerar links que serão enviados aos pacientes e ao WhatsApp. 
+## 📋 Índice
 
-**NUNCA use `localhost` ou `127.0.0.1` em produção!**
+1. [Configuração de URLs](#configuração-de-urls)
+2. [Variáveis de Ambiente](#variáveis-de-ambiente)
+3. [Banco de Dados](#banco-de-dados)
+4. [Segurança](#segurança)
+5. [Deploy no Railway](#deploy-no-railway)
+6. [Deploy em Outras Plataformas](#deploy-em-outras-plataformas)
+7. [Troubleshooting](#troubleshooting)
 
 ---
 
-## 📋 Passo a Passo para Configuração
+## ⚠️ Configuração de URLs
 
-### 1. Identifique o Domínio/IP do Servidor
+O sistema usa a variável `APP_BASE_URL` para gerar links que serão enviados aos colaboradores.
 
-Você precisa saber qual é o endereço público do seu servidor. Exemplos:
+**NUNCA use `localhost` ou `127.0.0.1` em produção!**
 
-- **Com domínio**: `https://AMFRA.com.br`
-- **Com IP público**: `http://192.168.1.100:5001`
-- **Com subdomínio**: `https://app.AMFRA.com.br`
+### Identificar o Domínio/IP do Servidor
 
-### 2. Edite o arquivo `.env`
+Você precisa saber qual é o endereço público do seu servidor:
 
-Abra o arquivo `.env` e altere as seguintes linhas:
+| Cenário | Exemplo de URL |
+|---------|----------------|
+| Com domínio | `https://amfra.com.br` |
+| Com IP público | `http://203.0.113.10:5000` |
+| Com subdomínio | `https://app.amfra.com.br` |
+| Railway | `https://amfra-saude-mental.railway.app` |
+| Heroku | `https://amfra-saude-mental.herokuapp.com` |
+| Rede local | `http://192.168.1.100:5000` |
+
+---
+
+## 🔧 Variáveis de Ambiente
+
+### Arquivo `.env` Completo para Produção
 
 ```env
-# ❌ ERRADO (desenvolvimento local)
-APP_BASE_URL=http://127.0.0.1:5000
-APP_PORT=5001
-PREFERRED_URL_SCHEME=http
-SESSION_COOKIE_SECURE=false
+# ============================================
+# SEGURANÇA
+# ============================================
+SECRET_KEY=<gerar-chave-forte-32-caracteres>
 
-# ✅ CORRETO (produção com domínio e HTTPS)
-APP_BASE_URL=https://AMFRA.com.br
-APP_PORT=5001
+# ============================================
+# URLs E SERVIDOR
+# ============================================
+APP_BASE_URL=https://amfra.com.br
 PREFERRED_URL_SCHEME=https
+
+# ============================================
+# BANCO DE DADOS
+# ============================================
+DATABASE_URL=postgresql+psycopg://usuario:senha@host:5432/amfra_db
+
+# ============================================
+# SEGURANÇA DE SESSÃO
+# ============================================
 SESSION_COOKIE_SECURE=true
 
-# ✅ CORRETO (produção com IP na rede local)
-APP_BASE_URL=http://192.168.1.100:5001
-APP_PORT=5001
-PREFERRED_URL_SCHEME=http
-SESSION_COOKIE_SECURE=false
+# ============================================
+# ADMINISTRAÇÃO
+# ============================================
+AUTO_CREATE_DB=false
+AUTO_SEED_ADMIN=false
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=<senha-super-forte>
+
+# ============================================
+# LOGS
+# ============================================
+LOG_LEVEL=INFO
+
+# ============================================
+# NOTIFICAÇÕES (OPCIONAL)
+# ============================================
+NOTIFICATION_RECIPIENT_NAME=Dra. Andrea Franco
 ```
 
-### 3. Configure o SECRET_KEY
+### Descrição das Variáveis
 
-Em produção, SEMPRE use uma chave secreta forte:
+#### Segurança
 
-```env
-# ❌ ERRADO
-SECRET_KEY=dev-secret-change-before-production-7b2f6f2e4f7a
+| Variável | Descrição | Exemplo | Obrigatório |
+|----------|-----------|---------|-------------|
+| `SECRET_KEY` | Chave secreta para sessões e CSRF | `abc123...` | ✅ Sim |
 
-# ✅ CORRETO (gere uma chave aleatória)
-SECRET_KEY=sua-chave-super-secreta-e-aleatoria-aqui-com-pelo-menos-32-caracteres
-```
-
-**Como gerar uma chave segura:**
-
+**Como gerar**:
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-### 4. Configure o Banco de Dados (Produção)
+#### URLs e Servidor
 
-Para produção, use PostgreSQL:
+| Variável | Descrição | Exemplo | Obrigatório |
+|----------|-----------|---------|-------------|
+| `APP_BASE_URL` | URL base da aplicação | `https://amfra.com.br` | ✅ Sim |
+| `PREFERRED_URL_SCHEME` | Protocolo (http/https) | `https` | ✅ Sim |
 
+#### Banco de Dados
+
+| Variável | Descrição | Exemplo | Obrigatório |
+|----------|-----------|---------|-------------|
+| `DATABASE_URL` | URL de conexão do banco | `postgresql+psycopg://...` | ✅ Sim (produção) |
+
+**Formatos suportados**:
+- PostgreSQL: `postgresql+psycopg://user:pass@host:5432/dbname`
+- SQLite (dev): `sqlite:///instance/app_narcista.db` ou vazio
+
+#### Segurança de Sessão
+
+| Variável | Descrição | Valores | Obrigatório |
+|----------|-----------|---------|-------------|
+| `SESSION_COOKIE_SECURE` | Cookies apenas via HTTPS | `true`/`false` | ✅ Sim (se HTTPS) |
+
+#### Administração
+
+| Variável | Descrição | Valores | Obrigatório |
+|----------|-----------|---------|-------------|
+| `AUTO_CREATE_DB` | Criar banco automaticamente | `true`/`false` | ❌ Não |
+| `AUTO_SEED_ADMIN` | Criar admin automaticamente | `true`/`false` | ❌ Não |
+| `ADMIN_USERNAME` | Nome de usuário admin | `admin` | ✅ Sim |
+| `ADMIN_PASSWORD` | Senha do admin | `senha123` | ✅ Sim |
+
+**IMPORTANTE**: Em produção, use `AUTO_SEED_ADMIN=false` e crie o admin manualmente:
+```bash
+flask --app run.py seed-admin
+```
+
+#### Logs
+
+| Variável | Descrição | Valores | Obrigatório |
+|----------|-----------|---------|-------------|
+| `LOG_LEVEL` | Nível de log | `DEBUG`, `INFO`, `WARNING`, `ERROR` | ❌ Não |
+
+---
+
+## 🗄️ Banco de Dados
+
+### SQLite (Desenvolvimento)
+
+Para desenvolvimento local, deixe `DATABASE_URL` vazio ou use:
 ```env
-# ❌ ERRADO (SQLite é só para desenvolvimento)
 DATABASE_URL=
-
-# ✅ CORRETO (PostgreSQL)
-DATABASE_URL=postgresql+psycopg://usuario:senha@localhost:5432/AMFRA_db
 ```
 
-### 5. Configure o WhatsApp (Opcional)
+O sistema criará automaticamente: `instance/app_narcista.db`
 
-Se quiser ativar notificações via WhatsApp:
+### PostgreSQL (Produção)
+
+Para produção, **sempre use PostgreSQL**:
 
 ```env
-WHATSAPP_ENABLED=true
-WHATSAPP_ACCESS_TOKEN=seu_token_da_meta_aqui
-WHATSAPP_PHONE_NUMBER_ID=seu_phone_number_id_aqui
-WHATSAPP_DESTINATION_NUMBER=5511985879829
+DATABASE_URL=postgresql+psycopg://usuario:senha@host:5432/amfra_db
+```
+
+#### Criar Banco PostgreSQL
+
+**Local (Linux/Mac)**:
+```bash
+# Instalar PostgreSQL
+sudo apt-get install postgresql  # Ubuntu/Debian
+brew install postgresql          # Mac
+
+# Criar banco
+sudo -u postgres createdb amfra_db
+sudo -u postgres createuser amfra_user -P
+
+# Dar permissões
+sudo -u postgres psql
+GRANT ALL PRIVILEGES ON DATABASE amfra_db TO amfra_user;
+```
+
+**Railway/Heroku**:
+- O banco é criado automaticamente
+- A variável `DATABASE_URL` é configurada automaticamente
+
+#### Inicializar Banco
+
+```bash
+# Criar tabelas
+flask --app run.py init-db
+
+# Criar admin
+flask --app run.py seed-admin
+```
+
+#### Backup do Banco
+
+**PostgreSQL**:
+```bash
+# Backup
+pg_dump -U usuario -h host amfra_db > backup.sql
+
+# Restaurar
+psql -U usuario -h host amfra_db < backup.sql
+```
+
+**SQLite**:
+```bash
+# Backup (copiar arquivo)
+cp instance/app_narcista.db backup_$(date +%Y%m%d).db
 ```
 
 ---
 
-## 🔍 Como Verificar se Está Correto
+## 🔒 Segurança
 
-### Teste 1: Verificar o Link do Questionário
+### Checklist de Segurança
 
-1. Faça login no admin
-2. Na dashboard, copie o "Link para paciente"
-3. O link deve começar com seu domínio/IP público:
-   - ✅ `https://AMFRA.com.br/questionario-pessoal`
-   - ✅ `http://192.168.1.100:5001/questionario-pessoal`
-   - ❌ `http://127.0.0.1:5000/questionario-pessoal`
+- [ ] `SECRET_KEY` forte e aleatório (mínimo 32 caracteres)
+- [ ] `ADMIN_PASSWORD` forte (letras, números, símbolos)
+- [ ] `SESSION_COOKIE_SECURE=true` (se HTTPS)
+- [ ] `PREFERRED_URL_SCHEME=https` (se HTTPS)
+- [ ] `AUTO_SEED_ADMIN=false` (criar admin manualmente)
+- [ ] PostgreSQL em produção (não SQLite)
+- [ ] Backup automático do banco configurado
+- [ ] Logs monitorados
+- [ ] Firewall configurado
+- [ ] HTTPS habilitado (certificado SSL)
+- [ ] Variáveis de ambiente não commitadas no Git
 
-### Teste 2: Verificar Notificação WhatsApp
+### Gerar Credenciais Fortes
 
-1. Preencha um formulário de teste
-2. Verifique o log de notificação no detalhe da submissão
-3. A URL enviada deve usar seu domínio/IP público
+**SECRET_KEY**:
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+**ADMIN_PASSWORD**:
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(16))"
+```
+
+### Configurar HTTPS
+
+**Com Nginx**:
+```nginx
+server {
+    listen 443 ssl;
+    server_name amfra.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/amfra.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/amfra.com.br/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+**Com Let's Encrypt**:
+```bash
+sudo apt-get install certbot python3-certbot-nginx
+sudo certbot --nginx -d amfra.com.br
+```
 
 ---
 
-## 🌐 Cenários Comuns
+## 🚂 Deploy no Railway
 
-### Cenário 1: Servidor na Nuvem (AWS, Azure, etc.)
+Railway é a plataforma recomendada para deploy rápido e fácil.
+
+### Passo a Passo
+
+#### 1. Criar Conta
+- Acesse: https://railway.app
+- Faça login com GitHub
+
+#### 2. Criar Novo Projeto
+- Clique em "New Project"
+- Selecione "Deploy from GitHub repo"
+- Escolha o repositório do AMFRA
+
+#### 3. Adicionar PostgreSQL
+- No projeto, clique em "New"
+- Selecione "Database" → "PostgreSQL"
+- O Railway criará automaticamente e configurará `DATABASE_URL`
+
+#### 4. Configurar Variáveis de Ambiente
+
+No painel do Railway, vá em "Variables" e adicione:
 
 ```env
-APP_BASE_URL=https://seu-dominio.com.br
+SECRET_KEY=<gerar-com-comando-python>
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=<senha-forte>
+APP_BASE_URL=https://${{RAILWAY_PUBLIC_DOMAIN}}
 PREFERRED_URL_SCHEME=https
 SESSION_COOKIE_SECURE=true
+AUTO_CREATE_DB=true
+AUTO_SEED_ADMIN=true
+LOG_LEVEL=INFO
 ```
 
-### Cenário 2: Servidor Local na Rede da Clínica
+**IMPORTANTE**: Use `${{RAILWAY_PUBLIC_DOMAIN}}` para pegar automaticamente o domínio do Railway.
 
-```env
-APP_BASE_URL=http://192.168.1.100:5001
-PREFERRED_URL_SCHEME=http
-SESSION_COOKIE_SECURE=false
+#### 5. Deploy
+
+- O Railway fará deploy automaticamente
+- Aguarde o build completar
+- Acesse a URL fornecida (exemplo: `https://amfra-saude-mental.railway.app`)
+
+#### 6. Inicializar Banco (se necessário)
+
+Se `AUTO_CREATE_DB=false`:
+
+```bash
+# Conectar ao Railway CLI
+railway login
+railway link
+
+# Inicializar banco
+railway run flask --app run.py init-db
+
+# Criar admin
+railway run flask --app run.py seed-admin
 ```
 
-### Cenário 3: Desenvolvimento Local (Testes)
+#### 7. Configurar Domínio Customizado (Opcional)
 
-```env
-APP_BASE_URL=http://127.0.0.1:5001
-PREFERRED_URL_SCHEME=http
-SESSION_COOKIE_SECURE=false
+- No Railway, vá em "Settings" → "Domains"
+- Clique em "Add Domain"
+- Configure o DNS do seu domínio:
+  - Tipo: `CNAME`
+  - Nome: `@` ou `app`
+  - Valor: `<seu-projeto>.railway.app`
+
+### Monitoramento no Railway
+
+- **Logs**: Aba "Deployments" → Clique no deploy → "View Logs"
+- **Métricas**: Aba "Metrics" (CPU, memória, rede)
+- **Banco**: Aba "PostgreSQL" → "Data" (visualizar tabelas)
+
+---
+
+## 🌐 Deploy em Outras Plataformas
+
+### Heroku
+
+```bash
+# Instalar Heroku CLI
+curl https://cli-assets.heroku.com/install.sh | sh
+
+# Login
+heroku login
+
+# Criar app
+heroku create amfra-saude-mental
+
+# Adicionar PostgreSQL
+heroku addons:create heroku-postgresql:mini
+
+# Configurar variáveis
+heroku config:set SECRET_KEY=<chave>
+heroku config:set ADMIN_USERNAME=admin
+heroku config:set ADMIN_PASSWORD=<senha>
+heroku config:set APP_BASE_URL=https://amfra-saude-mental.herokuapp.com
+heroku config:set PREFERRED_URL_SCHEME=https
+heroku config:set SESSION_COOKIE_SECURE=true
+
+# Deploy
+git push heroku main
+
+# Inicializar banco
+heroku run flask --app run.py init-db
+heroku run flask --app run.py seed-admin
+```
+
+### AWS Elastic Beanstalk
+
+```bash
+# Instalar EB CLI
+pip install awsebcli
+
+# Inicializar
+eb init -p python-3.10 amfra-saude-mental
+
+# Criar ambiente
+eb create amfra-production
+
+# Configurar variáveis
+eb setenv SECRET_KEY=<chave> ADMIN_USERNAME=admin ADMIN_PASSWORD=<senha>
+
+# Deploy
+eb deploy
+```
+
+### Google Cloud Run
+
+```bash
+# Criar Dockerfile (se não existir)
+# Fazer build
+gcloud builds submit --tag gcr.io/PROJECT_ID/amfra
+
+# Deploy
+gcloud run deploy amfra \
+  --image gcr.io/PROJECT_ID/amfra \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars SECRET_KEY=<chave>,ADMIN_USERNAME=admin
+```
+
+### Servidor VPS (Ubuntu)
+
+```bash
+# Instalar dependências
+sudo apt-get update
+sudo apt-get install python3 python3-pip python3-venv postgresql nginx
+
+# Clonar repositório
+git clone <repo-url> /var/www/amfra
+cd /var/www/amfra
+
+# Criar ambiente virtual
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Configurar .env
+cp .env.example .env
+nano .env  # Editar variáveis
+
+# Inicializar banco
+flask --app run.py init-db
+flask --app run.py seed-admin
+
+# Configurar systemd
+sudo nano /etc/systemd/system/amfra.service
+```
+
+**amfra.service**:
+```ini
+[Unit]
+Description=AMFRA Saude Mental
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/amfra
+Environment="PATH=/var/www/amfra/.venv/bin"
+ExecStart=/var/www/amfra/.venv/bin/gunicorn -w 4 -b 127.0.0.1:5000 "app:create_app()"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# Iniciar serviço
+sudo systemctl start amfra
+sudo systemctl enable amfra
+
+# Configurar Nginx (ver seção HTTPS acima)
 ```
 
 ---
 
-## 🔒 Checklist de Segurança para Produção
-
-- [ ] `SECRET_KEY` alterado para valor aleatório forte
-- [ ] `APP_BASE_URL` configurado com domínio/IP público
-- [ ] `SESSION_COOKIE_SECURE=true` se usar HTTPS
-- [ ] `ADMIN_PASSWORD` alterado para senha forte
-- [ ] `DATABASE_URL` configurado com PostgreSQL
-- [ ] `AUTO_SEED_ADMIN=false` (criar admin manualmente)
-- [ ] Certificado SSL configurado (se usar HTTPS)
-- [ ] Firewall configurado para permitir apenas portas necessárias
-
----
-
-## 🆘 Problemas Comuns
+## 🔍 Troubleshooting
 
 ### Problema: Links com `localhost` sendo enviados
 
 **Causa**: `APP_BASE_URL` ainda está com `127.0.0.1`
 
-**Solução**: 
+**Solução**:
 1. Edite `.env` e altere `APP_BASE_URL`
 2. Reinicie o servidor: `python run.py`
 
-### Problema: Paciente não consegue acessar o link
+### Problema: Colaboradores não conseguem acessar o link
 
 **Causa**: URL usa IP local ou porta bloqueada
 
 **Solução**:
 1. Verifique se o servidor está acessível externamente
 2. Configure port forwarding no roteador (se necessário)
-3. Use um domínio público ou serviço como ngrok para testes
+3. Use um domínio público ou Railway/Heroku
 
-### Problema: WhatsApp não envia notificações
+### Problema: Erro 500 ao acessar o sistema
 
-**Causa**: URL inválida ou credenciais incorretas
+**Causa**: Banco não inicializado ou variáveis incorretas
 
 **Solução**:
-1. Verifique `WHATSAPP_ENABLED=true`
-2. Confirme `WHATSAPP_ACCESS_TOKEN` e `WHATSAPP_PHONE_NUMBER_ID`
-3. Teste a URL manualmente no navegador
+1. Verifique logs: `instance/logs/app_narcista.log`
+2. Inicialize banco: `flask --app run.py init-db`
+3. Verifique `.env`
 
----
+### Problema: Erro de conexão com PostgreSQL
 
-## 📞 Suporte
+**Causa**: `DATABASE_URL` incorreta ou banco não acessível
 
-Se precisar de ajuda, verifique:
-1. Os logs em `instance/logs/app_narcista.log`
-2. A configuração do `.env`
-3. Se o servidor está acessível na rede
+**Solução**:
+1. Verifique formato: `postgresql+psycopg://user:pass@host:5432/db`
+2. Teste conexão: `psql -U user -h host -d db`
+3. Verifique firewall
 
----
+### Problema: Gráficos não aparecem
 
-## 🎯 Exemplo Completo de `.env` para Produção
+**Causa**: Chart.js não carregando
 
-```env
-# Segurança
-SECRET_KEY=gere-uma-chave-aleatoria-forte-aqui-32-caracteres-minimo
+**Solução**:
+1. Verifique console do navegador (F12)
+2. Verifique se CDN está acessível
+3. Limpe cache do navegador
 
-# URLs e Servidor
-APP_BASE_URL=https://AMFRA.com.br
-APP_PORT=5001
-PREFERRED_URL_SCHEME=https
+### Problema: Sessão expira muito rápido
 
-# Banco de Dados
-DATABASE_URL=postgresql+psycopg://AMFRA_user:senha_forte@localhost:5432/AMFRA_db
+**Causa**: `PERMANENT_SESSION_LIFETIME` muito curto
 
-# Segurança de Sessão
-SESSION_COOKIE_SECURE=true
-
-# Banco e Admin
-AUTO_CREATE_DB=false
-AUTO_SEED_ADMIN=false
-ADMIN_USERNAME=dra_andrea
-ADMIN_PASSWORD=senha-super-forte-aqui
-
-# Logs
-LOG_LEVEL=INFO
-
-# WhatsApp
-NOTIFICATION_RECIPIENT_NAME=Dra. Andrea Franco
-WHATSAPP_ENABLED=true
-WHATSAPP_API_BASE=https://graph.facebook.com
-WHATSAPP_API_VERSION=v21.0
-WHATSAPP_ACCESS_TOKEN=seu_token_meta_aqui
-WHATSAPP_PHONE_NUMBER_ID=seu_phone_id_aqui
-WHATSAPP_DESTINATION_NUMBER=5511985879829
-WHATSAPP_TIMEOUT_SECONDS=15
+**Solução**:
+Edite `config.py`:
+```python
+PERMANENT_SESSION_LIFETIME = timedelta(hours=24)  # 24 horas
 ```
 
 ---
 
+## 📊 Monitoramento e Logs
+
+### Visualizar Logs
+
+**Local**:
+```bash
+# Tempo real
+tail -f instance/logs/app_narcista.log
+
+# Últimas 100 linhas
+tail -n 100 instance/logs/app_narcista.log
+
+# Filtrar erros
+grep ERROR instance/logs/app_narcista.log
+```
+
+**Railway**:
+- Aba "Deployments" → Clique no deploy → "View Logs"
+
+**Heroku**:
+```bash
+heroku logs --tail
+```
+
+### Métricas
+
+**Railway**: Aba "Metrics"
+**Heroku**: `heroku ps` ou dashboard web
+**AWS**: CloudWatch
+
+---
+
+## 🎯 Checklist Final de Deploy
+
+- [ ] `.env` configurado com todas as variáveis
+- [ ] `APP_BASE_URL` com domínio/IP público
+- [ ] `SECRET_KEY` forte e aleatório
+- [ ] `ADMIN_PASSWORD` forte
+- [ ] PostgreSQL configurado
+- [ ] Banco inicializado (`flask init-db`)
+- [ ] Admin criado (`flask seed-admin`)
+- [ ] HTTPS configurado (se aplicável)
+- [ ] `SESSION_COOKIE_SECURE=true` (se HTTPS)
+- [ ] Firewall configurado
+- [ ] Backup automático configurado
+- [ ] Logs monitorados
+- [ ] Testado em dispositivo externo
+- [ ] Documentação atualizada
+
+---
+
+**Desenvolvido para**: AMFRA Saúde Mental LTDA  
+**Versão**: 2.0  
 **Última atualização**: 2024
-**Versão**: 1.0
