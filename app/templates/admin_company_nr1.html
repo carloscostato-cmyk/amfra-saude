@@ -253,10 +253,20 @@
     height: 100%;
     border-radius: 99px;
     transition: width 0.4s ease;
+    min-width: 2px; /* Ensure visibility even for very low values */
 }
-.nr1-progress__fill--baixo  { background: linear-gradient(90deg, #ef4444, #f87171); }
-.nr1-progress__fill--medio  { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
-.nr1-progress__fill--alto   { background: linear-gradient(90deg, #10b981, #34d399); }
+.nr1-progress__fill--baixo  { 
+    background: linear-gradient(90deg, #ef4444, #f87171); 
+    background-color: #ef4444; /* Fallback for print */
+}
+.nr1-progress__fill--medio  { 
+    background: linear-gradient(90deg, #f59e0b, #fcd34d); 
+    background-color: #f59e0b; /* Fallback for print */
+}
+.nr1-progress__fill--alto   { 
+    background: linear-gradient(90deg, #10b981, #34d399); 
+    background-color: #10b981; /* Fallback for print */
+}
 
 /* ── Badge de classificação ─────────────── */
 .nr1-badge {
@@ -523,6 +533,16 @@
         height: auto !important;
     }
     
+    /* Ensure chart print images are visible */
+    .chart-print-image {
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 auto;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
     /* ── Tables ────────────────────────────── */
     .nr1-table {
         page-break-inside: auto;
@@ -562,6 +582,29 @@
     
     .nr1-progress {
         border: 1px solid #ddd;
+        background: #f5f5f5 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .nr1-progress__fill {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .nr1-progress__fill--baixo {
+        background: #ef4444 !important;
+        background-color: #ef4444 !important;
+    }
+    
+    .nr1-progress__fill--medio {
+        background: #f59e0b !important;
+        background-color: #f59e0b !important;
+    }
+    
+    .nr1-progress__fill--alto {
+        background: #10b981 !important;
+        background-color: #10b981 !important;
     }
     
     /* ── Badges ────────────────────────────── */
@@ -1061,41 +1104,86 @@ document.addEventListener('DOMContentLoaded', function() {
     // PRINT EVENT HANDLERS - Convert charts to static images
     // ═══════════════════════════════════════════════════════════
     window.addEventListener('beforeprint', function() {
+        console.log('[PRINT] beforeprint event triggered');
+        
         // Convert consolidated chart to static image
-        if (consolidatedChartInstance) {
-            const canvas = consolidatedChartInstance.canvas;
-            const imageData = canvas.toDataURL('image/png');
-            const img = new Image();
-            img.src = imageData;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-            canvas.style.display = 'none';
-            canvas.parentNode.insertBefore(img, canvas);
-            canvas.dataset.printImage = 'true';
+        if (consolidatedChartInstance && consolidatedChartInstance.canvas) {
+            try {
+                const canvas = consolidatedChartInstance.canvas;
+                console.log('[PRINT] Converting consolidated chart to image...');
+                
+                // Force chart render before conversion
+                consolidatedChartInstance.update();
+                
+                // Convert to image with higher quality
+                const imageData = canvas.toDataURL('image/png', 1.0);
+                console.log('[PRINT] Image data length:', imageData.length);
+                
+                const img = document.createElement('img');
+                img.src = imageData;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.display = 'block';
+                img.className = 'chart-print-image';
+                
+                // Hide canvas and insert image
+                canvas.style.display = 'none';
+                canvas.parentNode.insertBefore(img, canvas);
+                canvas.dataset.printImage = 'consolidated';
+                
+                console.log('[PRINT] Consolidated chart converted successfully');
+            } catch (error) {
+                console.error('[PRINT] Error converting consolidated chart:', error);
+            }
+        } else {
+            console.warn('[PRINT] Consolidated chart instance not found');
         }
         
         // Convert radar chart to static image
-        if (radarChartInstance) {
-            const canvas = radarChartInstance.canvas;
-            const imageData = canvas.toDataURL('image/png');
-            const img = new Image();
-            img.src = imageData;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-            canvas.style.display = 'none';
-            canvas.parentNode.insertBefore(img, canvas);
-            canvas.dataset.printImage = 'true';
+        if (radarChartInstance && radarChartInstance.canvas) {
+            try {
+                const canvas = radarChartInstance.canvas;
+                console.log('[PRINT] Converting radar chart to image...');
+                
+                // Force chart render before conversion
+                radarChartInstance.update();
+                
+                // Convert to image with higher quality
+                const imageData = canvas.toDataURL('image/png', 1.0);
+                console.log('[PRINT] Image data length:', imageData.length);
+                
+                const img = document.createElement('img');
+                img.src = imageData;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                img.style.display = 'block';
+                img.className = 'chart-print-image';
+                
+                // Hide canvas and insert image
+                canvas.style.display = 'none';
+                canvas.parentNode.insertBefore(img, canvas);
+                canvas.dataset.printImage = 'radar';
+                
+                console.log('[PRINT] Radar chart converted successfully');
+            } catch (error) {
+                console.error('[PRINT] Error converting radar chart:', error);
+            }
+        } else {
+            console.warn('[PRINT] Radar chart instance not found');
         }
     });
     
     window.addEventListener('afterprint', function() {
+        console.log('[PRINT] afterprint event triggered');
+        
         // Restore consolidated chart
-        if (consolidatedChartInstance) {
+        if (consolidatedChartInstance && consolidatedChartInstance.canvas) {
             const canvas = consolidatedChartInstance.canvas;
-            if (canvas.dataset.printImage) {
+            if (canvas.dataset.printImage === 'consolidated') {
                 const img = canvas.previousSibling;
-                if (img && img.tagName === 'IMG') {
+                if (img && img.className === 'chart-print-image') {
                     img.remove();
+                    console.log('[PRINT] Consolidated chart image removed');
                 }
                 canvas.style.display = '';
                 delete canvas.dataset.printImage;
@@ -1103,17 +1191,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Restore radar chart
-        if (radarChartInstance) {
+        if (radarChartInstance && radarChartInstance.canvas) {
             const canvas = radarChartInstance.canvas;
-            if (canvas.dataset.printImage) {
+            if (canvas.dataset.printImage === 'radar') {
                 const img = canvas.previousSibling;
-                if (img && img.tagName === 'IMG') {
+                if (img && img.className === 'chart-print-image') {
                     img.remove();
+                    console.log('[PRINT] Radar chart image removed');
                 }
                 canvas.style.display = '';
                 delete canvas.dataset.printImage;
             }
         }
+        
+        console.log('[PRINT] Charts restored to canvas');
     });
 });
 </script>
