@@ -491,6 +491,20 @@
     </div>
 
     {# ───────────────────────────────────────
+       SEÇÃO 0.5 — GRÁFICO RADAR DAS 7 DIMENSÕES
+    ─────────────────────────────────────── #}
+    <div class="nr1-section">
+        <div class="nr1-section__head">
+            <span class="nr1-section__kicker">Análise Dimensional</span>
+            <h2 class="nr1-section__title">Perfil das 7 Dimensões HSE-IT</h2>
+        </div>
+
+        <div class="nr1-chart-container" style="height: 450px;">
+            <canvas id="radarChart" role="img" aria-label="Gráfico radar mostrando as médias das 7 dimensões do HSE-IT"></canvas>
+        </div>
+    </div>
+
+    {# ───────────────────────────────────────
        SEÇÃO 1 — RESULTADOS POR DIMENSÃO
     ─────────────────────────────────────── #}
     <div class="nr1-section">
@@ -603,6 +617,9 @@
 {% if report.status == "success" %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // ═══════════════════════════════════════════════════════════
+    // GRÁFICO 1: Barras Horizontais - Distribuição de Riscos
+    // ═══════════════════════════════════════════════════════════
     const ctx = document.getElementById('consolidatedChart');
     if (!ctx) return;
     
@@ -698,6 +715,105 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
         console.error('Failed to initialize consolidated chart:', error);
         ctx.parentElement.innerHTML = '<p style="text-align:center;color:#64748b;padding:2rem;">Não foi possível carregar o gráfico. Os dados estão disponíveis na tabela abaixo.</p>';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // GRÁFICO 2: Radar - 7 Dimensões HSE-IT
+    // ═══════════════════════════════════════════════════════════
+    const radarCtx = document.getElementById('radarChart');
+    if (!radarCtx) return;
+    
+    try {
+        // Preparar dados das dimensões
+        const dimensionData = {
+            labels: [
+                {% for dim in report.dimension_analysis %}
+                '{{ dim.dimension_name }}'{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            values: [
+                {% for dim in report.dimension_analysis %}
+                {{ dim.average }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        };
+        
+        // Criar gráfico radar
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: dimensionData.labels,
+                datasets: [{
+                    label: 'Média da Empresa',
+                    data: dimensionData.values,
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(37, 99, 235, 1)',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.r.toFixed(2);
+                                let classification = 'MÉDIO';
+                                if (value < 2.30) classification = 'BAIXO';
+                                else if (value >= 3.70) classification = 'ALTO';
+                                return `Média: ${value} (${classification})`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: false
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                return value.toFixed(1);
+                            },
+                            font: {
+                                size: 11
+                            }
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            color: '#1e293b'
+                        },
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        angleLines: {
+                            color: '#e2e8f0'
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to initialize radar chart:', error);
+        radarCtx.parentElement.innerHTML = '<p style="text-align:center;color:#64748b;padding:2rem;">Não foi possível carregar o gráfico radar.</p>';
     }
 });
 </script>
