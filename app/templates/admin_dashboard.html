@@ -57,15 +57,6 @@
                             <td style="text-align: right; padding-right: 0; white-space: nowrap;">
                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
 
-                                    {# Copiar link público #}
-                                    <button type="button"
-                                            id="copyBtn-{{ company.id }}"
-                                            class="button button--ghost button--compact"
-                                            onclick="copyCompanyLink('{{ url_for('public.questionnaire', company_token=company.token, _external=True) }}', {{ company.id }})"
-                                            style="border-color: var(--line); color: var(--text-soft);">
-                                        Copiar Link
-                                    </button>
-
                                     <a class="button button--ghost button--compact"
                                        href="{{ url_for('admin.company_detail', company_id=company.id) }}"
                                        style="border-color: var(--line); color: var(--text);">
@@ -109,18 +100,6 @@
 </section>
 
 <script>
-function copyCompanyLink(url, id) {
-    navigator.clipboard.writeText(url).then(() => {
-        const btn = document.getElementById('copyBtn-' + id);
-        if (btn) {
-            const orig = btn.innerText;
-            btn.innerText = '✓ Copiado!';
-            btn.style.color = '#10b981';
-            setTimeout(() => { btn.innerText = orig; btn.style.color = ''; }, 2000);
-        }
-    });
-}
-
 function confirmDelete(id, name) {
     const msg = `ATENÇÃO: Você excluirá permanentemente "${name}" e TODOS os resultados de seus colaboradores.\n\nDeseja confirmar a exclusão?`;
     if (window.confirm(msg)) {
