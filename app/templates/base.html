@@ -4,6 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="AMFRA SAÚDE MENTAL LTDA: plataforma segura para questionários pessoais e acompanhamento administrativo.">
+    
+    <!-- Favicon e ícones para mobile -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/brain-icon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/brain-icon.svg') }}">
+    
+    <!-- Meta tags para PWA (Progressive Web App) -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AMFRA Diagnóstico">
+    
     <title>{% block title %}{{ app_name }}{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
