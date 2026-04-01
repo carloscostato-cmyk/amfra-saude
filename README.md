@@ -78,6 +78,33 @@ README.md
   - 26 a 35 = `ALERTA: SINAIS NARCÍSICOS SIGNIFICATIVOS`
   - 36 a 40 = `CRÍTICO: ABUSO NARCÍSICO — INTERVENÇÃO NECESSÁRIA`
 
+## Novidades: Gráfico Consolidado NR-1 📊
+
+A partir de 2024, o sistema inclui um **gráfico consolidado de distribuição de riscos** na página de relatório NR-1 da empresa.
+
+### Características:
+- 📊 Gráfico de barras horizontais
+- 🎨 Cores intuitivas: vermelho (BAIXO), amarelo (MÉDIO), verde (ALTO)
+- 📈 Exibe contagem e percentual para cada nível
+- 📱 Totalmente responsivo (desktop e mobile)
+- ♿ Acessível (ARIA labels, screen readers)
+- ⚡ Rápido (< 500ms de renderização)
+
+### Tecnologias:
+- Chart.js 4.4.2
+- chartjs-plugin-datalabels 2.2.0
+
+### Documentação:
+- Resumo: `RESUMO_GRAFICO_NR1.md`
+- Deploy: `DEPLOY_GRAFICO_NR1.md`
+- Documentação completa: `.kiro/specs/company-consolidated-nr1-chart/`
+
+### Teste:
+```bash
+python test_consolidated_chart.py
+```
+
+
 ## Modelos principais
 
 - `AdminUser`
