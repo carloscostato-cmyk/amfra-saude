@@ -330,6 +330,234 @@
 @media (max-width: 600px) {
     .sub-kpis { grid-template-columns: 1fr 1fr; }
 }
+
+/* ══════════════════════════════════════════════
+   PRINT STYLES — PDF PROFESSIONAL OUTPUT
+   ══════════════════════════════════════════════ */
+@media print {
+    /* ── Page Setup ────────────────────────── */
+    @page {
+        size: A4;
+        margin: 20mm 15mm 30mm 15mm;
+    }
+    
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+    
+    /* ── Hide Interactive Elements ─────────── */
+    .sub-header__actions,
+    button,
+    .button {
+        display: none !important;
+    }
+    
+    /* ── Page Container ────────────────────── */
+    .sub-page {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* ── Header ────────────────────────────── */
+    .sub-header {
+        page-break-after: avoid;
+        border-bottom: 2px solid #333;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .sub-header__name {
+        font-size: 20pt;
+        color: #000;
+    }
+    
+    .sub-header__subtitle {
+        font-size: 10pt;
+        color: #333;
+    }
+    
+    /* ── KPIs ──────────────────────────────── */
+    .sub-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem;
+    }
+    
+    .sub-kpi {
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        page-break-inside: avoid;
+        padding: 1rem;
+    }
+    
+    .sub-kpi::before {
+        display: none;
+    }
+    
+    .sub-kpi__label {
+        font-size: 8pt;
+        color: #666;
+    }
+    
+    .sub-kpi__value {
+        font-size: 16pt;
+        color: #000;
+    }
+    
+    /* ── Legend ────────────────────────────── */
+    .sub-legend {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* ── Sections ──────────────────────────── */
+    .sub-section {
+        page-break-inside: avoid;
+        margin-bottom: 2rem;
+    }
+    
+    .sub-section__head {
+        page-break-after: avoid;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .sub-section__title {
+        font-size: 14pt;
+        color: #000;
+    }
+    
+    .sub-section__kicker {
+        font-size: 8pt;
+        background: #f0f0f0;
+        color: #333;
+    }
+    
+    /* ── Interpretation Grid ───────────────── */
+    .sub-interp-grid {
+        page-break-inside: avoid;
+        display: block;
+    }
+    
+    .sub-interp-box {
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+    }
+    
+    .sub-interp-classification {
+        font-size: 12pt;
+    }
+    
+    /* ── Radar Chart ───────────────────────── */
+    .sub-radar-wrap {
+        page-break-inside: avoid !important;
+        page-break-before: auto;
+        page-break-after: auto;
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* ── Tables ────────────────────────────── */
+    .sub-table {
+        page-break-inside: auto;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    .sub-table thead {
+        display: table-header-group;
+    }
+    
+    .sub-table tr {
+        page-break-inside: avoid;
+    }
+    
+    .sub-table td,
+    .sub-table th {
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+    }
+    
+    .sub-table th {
+        background: #f0f0f0;
+        font-size: 8pt;
+        color: #333;
+    }
+    
+    .sub-table td {
+        font-size: 9pt;
+    }
+    
+    /* ── Progress Bars (ensure visible) ────── */
+    .sub-progress {
+        display: block !important;
+        visibility: visible !important;
+        border: 1px solid #ddd;
+    }
+    
+    /* ── Badges ────────────────────────────── */
+    .sub-badge {
+        border: 1px solid #333;
+        font-size: 7pt;
+    }
+    
+    /* ── Answer Items ──────────────────────── */
+    .sub-answers {
+        page-break-inside: auto;
+    }
+    
+    .sub-answer-item {
+        page-break-inside: avoid;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    /* ── Color Adjustments for Print ───────── */
+    .sub-kpi__value--baixo {
+        color: #c00 !important;
+    }
+    
+    .sub-kpi__value--medio {
+        color: #c60 !important;
+    }
+    
+    .sub-kpi__value--alto {
+        color: #060 !important;
+    }
+    
+    /* ── Professional Footer ───────────────── */
+    body::after {
+        content: "AMFRA SAÚDE MENTAL - Avaliação Clínica Digital";
+        display: block;
+        position: fixed;
+        bottom: 10mm;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 9pt;
+        color: #666;
+        border-top: 1px solid #ddd;
+        padding-top: 8pt;
+        background: #fff;
+    }
+}
 </style>
 {% endblock %}
 
@@ -535,9 +763,12 @@ const radarData   = radarLabels.map(dim => {
     return vals.length ? (vals.reduce((s,v) => s+v, 0) / vals.length).toFixed(2) : 0;
 });
 
+// Store chart instance for print handling
+let radarChartInstance = null;
+
 const ctx = document.getElementById('radarChart');
 if (ctx) {
-    new Chart(ctx, {
+    radarChartInstance = new Chart(ctx, {
         type: 'radar',
         data: {
             labels: radarLabels,
@@ -567,5 +798,36 @@ if (ctx) {
         }
     });
 }
+
+// ═══════════════════════════════════════════════════════════
+// PRINT EVENT HANDLERS - Convert chart to static image
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('beforeprint', function() {
+    if (radarChartInstance) {
+        const canvas = radarChartInstance.canvas;
+        const imageData = canvas.toDataURL('image/png');
+        const img = new Image();
+        img.src = imageData;
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        canvas.style.display = 'none';
+        canvas.parentNode.insertBefore(img, canvas);
+        canvas.dataset.printImage = 'true';
+    }
+});
+
+window.addEventListener('afterprint', function() {
+    if (radarChartInstance) {
+        const canvas = radarChartInstance.canvas;
+        if (canvas.dataset.printImage) {
+            const img = canvas.previousSibling;
+            if (img && img.tagName === 'IMG') {
+                img.remove();
+            }
+            canvas.style.display = '';
+            delete canvas.dataset.printImage;
+        }
+    }
+});
 </script>
 {% endblock %}

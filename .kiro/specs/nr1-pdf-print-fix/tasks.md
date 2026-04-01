@@ -1,0 +1,202 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - NR-1 Print Rendering Failure
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists
+  - **Scoped PBT Approach**: For deterministic bugs, scope the property to the concrete failing case(s) to ensure reproducibility
+  - Test that when print media is triggered for admin_company_nr1.html or admin_submission_detail.html, the system generates blank pages and missing content
+  - Verify bug condition: `(page = "admin_company_nr1.html" OR page = "admin_submission_detail.html") AND mediaType = "print"`
+  - Test assertions should match Expected Behavior Properties:
+    - Charts should be visible (not blank spaces)
+    - All KPIs should be visible
+    - All tables and sections should be visible
+    - Footer should be present on all pages
+    - Page breaks should not split charts
+  - Run test on UNFIXED code by opening admin_company_nr1.html and admin_submission_detail.html in browser
+  - Click "Imprimir Relatório" / "Imprimir / PDF" buttons
+  - Observe print preview and document failures:
+    - Blank space where consolidated horizontal bar chart should appear
+    - Blank space where radar chart should appear
+    - Missing or hidden KPI cards
+    - Missing footer on all pages
+    - Charts breaking across page boundaries
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bug exists)
+  - Document counterexamples found to understand root cause
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
+
+- [ ] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Screen Display and Non-NR1 Pages Unchanged
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-buggy inputs (screen media, non-NR1 pages)
+  - Test cases to observe and document:
+    - Screen display: Open admin_company_nr1.html in browser, verify charts are interactive with tooltips
+    - Screen display: Open admin_submission_detail.html in browser, verify radar chart has hover effects
+    - Responsive behavior: Resize browser window, verify mobile breakpoints trigger correctly
+    - Navigation buttons: Verify "Voltar" and "Copiar link" buttons are visible on screen
+    - Other pages: Print admin_dashboard.html, verify existing print styles work correctly
+  - Write property-based tests capturing observed behavior patterns:
+    - For all screen media rendering of NR-1 pages, interactive charts should work
+    - For all responsive viewport sizes, layout should adapt correctly
+    - For all non-NR1 admin pages, print behavior should remain unchanged
+  - Property-based testing generates many test cases for stronger guarantees
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+
+- [x] 3. Fix for NR-1 PDF/Print blank pages and missing content
+
+  - [x] 3.1 Add @media print CSS block to admin_company_nr1.html
+    - Open app/templates/admin_company_nr1.html
+    - Locate the existing `<style>` block (after responsive rules, before `</style>`)
+    - Insert comprehensive @media print CSS rules:
+      - Page setup: `@page { size: A4; margin: 20mm 15mm; }`
+      - Hide interactive elements: `.nr1-header__actions { display: none !important; }`
+      - Optimize page container: `.nr1-page { max-width: 100%; margin: 0; padding: 0; }`
+      - Style header: `.nr1-header { page-break-after: avoid; border-bottom: 2px solid #333; }`
+      - Style KPIs: `.nr1-kpis { display: grid; grid-template-columns: repeat(4, 1fr); page-break-inside: avoid; }`
+      - Style KPI cards: `.nr1-kpi { border: 1px solid #ddd; background: #f9f9f9; page-break-inside: avoid; }`
+      - Style legend: `.nr1-legend { page-break-inside: avoid; border: 1px solid #ddd; }`
+      - Style sections: `.nr1-section { page-break-inside: avoid; margin-bottom: 2rem; }`
+      - Style chart containers: `.nr1-chart-container { page-break-inside: avoid !important; border: 1px solid #ddd; padding: 1rem; }`
+      - Style canvas: `canvas { max-width: 100% !important; height: auto !important; }`
+      - Style tables: `.nr1-table { page-break-inside: auto; border-collapse: collapse; width: 100%; }`
+      - Ensure progress bars visible: `.nr1-table__bar-wrap { display: block !important; visibility: visible !important; }`
+      - Style distribution grid: `.nr1-dist-grid { page-break-inside: avoid; }`
+      - Style risk list: `.nr1-risk-list { page-break-inside: auto; }` and `.nr1-risk-item { page-break-inside: avoid; }`
+      - Add professional footer using @page @bottom-center and body::after fallback
+      - Add color adjustments for risk levels (red, orange, green)
+    - _Bug_Condition: isBugCondition(input) where input.page = "admin_company_nr1.html" AND input.mediaType = "print"_
+    - _Expected_Behavior: result.chartsVisible = true AND result.kpisVisible = true AND result.footerPresent = true_
+    - _Preservation: Screen display must remain unchanged with interactive charts_
+    - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.6, 2.7_
+
+  - [x] 3.2 Add @media print CSS block to admin_submission_detail.html
+    - Open app/templates/admin_submission_detail.html
+    - Locate the existing `<style>` block (after responsive rules, before `</style>`)
+    - Insert comprehensive @media print CSS rules:
+      - Page setup: `@page { size: A4; margin: 20mm 15mm; }`
+      - Hide interactive elements: `.sub-header__actions { display: none !important; }`
+      - Optimize page container: `.sub-page { max-width: 100%; margin: 0; padding: 0; }`
+      - Style header: `.sub-header { page-break-after: avoid; border-bottom: 2px solid #333; }`
+      - Style KPIs: `.sub-kpis { display: grid; grid-template-columns: repeat(4, 1fr); page-break-inside: avoid; }`
+      - Style KPI cards: `.sub-kpi { border: 1px solid #ddd; background: #f9f9f9; page-break-inside: avoid; }`
+      - Style legend: `.sub-legend { page-break-inside: avoid; border: 1px solid #ddd; }`
+      - Style sections: `.sub-section { page-break-inside: avoid; margin-bottom: 2rem; }`
+      - Style radar chart container: `.sub-radar-wrap { page-break-inside: avoid !important; border: 1px solid #ddd; padding: 1rem; }`
+      - Style canvas: `canvas { max-width: 100% !important; height: auto !important; }`
+      - Style dimension table: `.sub-table { page-break-inside: auto; border-collapse: collapse; width: 100%; }`
+      - Style interpretation grid: `.sub-interp-grid { page-break-inside: avoid; display: block; }`
+      - Style interpretation box: `.sub-interp-box { page-break-inside: avoid; margin-bottom: 1rem; }`
+      - Style answer items: `.sub-answers { page-break-inside: auto; }` and `.sub-answer-item { page-break-inside: avoid; }`
+      - Add professional footer matching company report
+      - Add color adjustments for risk levels
+    - _Bug_Condition: isBugCondition(input) where input.page = "admin_submission_detail.html" AND input.mediaType = "print"_
+    - _Expected_Behavior: result.chartsVisible = true AND result.kpisVisible = true AND result.footerPresent = true_
+    - _Preservation: Screen display must remain unchanged with interactive charts_
+    - _Requirements: 2.1, 2.2, 2.4, 2.5, 2.6, 2.7_
+
+  - [x] 3.3 Add Chart.js print event handlers to admin_company_nr1.html
+    - Open app/templates/admin_company_nr1.html
+    - Locate the existing `<script>` block where Chart.js charts are initialized
+    - Store chart instances in global variables:
+      - `let consolidatedChartInstance = null;`
+      - `let radarChartInstance = null;`
+    - Update chart creation to store instances:
+      - `consolidatedChartInstance = new Chart(ctx, { /* existing config */ });`
+      - `radarChartInstance = new Chart(radarCtx, { /* existing config */ });`
+    - Add beforeprint event listener:
+      - Convert consolidatedChartInstance canvas to static image using `canvas.toDataURL('image/png')`
+      - Convert radarChartInstance canvas to static image
+      - Hide original canvas and insert image before it
+      - Mark canvas with `dataset.printImage = 'true'`
+    - Add afterprint event listener:
+      - Remove static images
+      - Restore original canvas display
+      - Remove `dataset.printImage` marker
+    - _Bug_Condition: Chart.js canvas elements don't render in print media without explicit handling_
+    - _Expected_Behavior: Charts convert to static images during print, restore to interactive after print_
+    - _Preservation: Interactive charts on screen must continue to work with tooltips and hover effects_
+    - _Requirements: 2.1, 2.3_
+
+  - [x] 3.4 Add Chart.js print event handlers to admin_submission_detail.html
+    - Open app/templates/admin_submission_detail.html
+    - Locate the existing `<script>` block where radar chart is initialized
+    - Store chart instance in global variable:
+      - `let radarChartInstance = null;`
+    - Update chart creation to store instance:
+      - `radarChartInstance = new Chart(radarCtx, { /* existing config */ });`
+    - Add beforeprint event listener:
+      - Convert radarChartInstance canvas to static image using `canvas.toDataURL('image/png')`
+      - Hide original canvas and insert image before it
+      - Mark canvas with `dataset.printImage = 'true'`
+    - Add afterprint event listener:
+      - Remove static image
+      - Restore original canvas display
+      - Remove `dataset.printImage` marker
+    - _Bug_Condition: Chart.js canvas elements don't render in print media without explicit handling_
+    - _Expected_Behavior: Radar chart converts to static image during print, restores to interactive after print_
+    - _Preservation: Interactive radar chart on screen must continue to work with tooltips and hover effects_
+    - _Requirements: 2.1, 2.3_
+
+  - [x] 3.5 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - NR-1 Print Rendering Complete
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Open admin_company_nr1.html in browser
+    - Click "Imprimir Relatório" button
+    - Verify in print preview:
+      - Consolidated horizontal bar chart appears as static image (not blank)
+      - Radar chart appears as static image (not blank)
+      - All KPI cards are visible with proper styling
+      - All tables and sections are visible
+      - Footer "AMFRA SAÚDE MENTAL - Avaliação Clínica Digital" appears on all pages
+      - Charts do not break across page boundaries
+    - Open admin_submission_detail.html in browser
+    - Click "Imprimir / PDF" button
+    - Verify in print preview:
+      - Radar chart appears as static image (not blank)
+      - All KPI cards are visible
+      - Dimension table is visible
+      - Answer items are visible
+      - Footer appears on all pages
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
+
+  - [x] 3.6 Verify preservation tests still pass
+    - **Property 2: Preservation** - Screen Display and Non-NR1 Pages Unchanged
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2:
+      - Screen display: Open admin_company_nr1.html, verify charts are interactive with tooltips
+      - Screen display: Open admin_submission_detail.html, verify radar chart has hover effects
+      - Responsive behavior: Resize browser window, verify mobile breakpoints work
+      - Navigation buttons: Verify "Voltar" and "Copiar link" buttons visible on screen
+      - Other pages: Print admin_dashboard.html, verify existing print styles unchanged
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm all tests still pass after fix (no regressions)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Verify bug condition test passes (charts visible in print preview)
+  - Verify preservation tests pass (screen display unchanged)
+  - Test print preview quality:
+    - Charts are high-quality static images (not pixelated)
+    - Colors are accurate and distinguishable (red, orange, green for risk levels)
+    - Footer appears on every page of multi-page PDFs
+    - Page breaks are correct (charts not split)
+    - Layout is optimized for A4 paper
+  - Test actual PDF generation:
+    - Save PDF from print dialog
+    - Open saved PDF and verify all content is intact
+    - Verify PDF is suitable for clinical documentation (professional appearance)
+  - Test cross-browser compatibility:
+    - Test in Chrome (primary browser)
+    - Test in Firefox (if available)
+    - Test in Safari (if available)
+  - If any issues arise, ask the user for guidance
+  - _Requirements: All requirements 1.1-3.6_

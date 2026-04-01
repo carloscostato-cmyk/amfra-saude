@@ -395,6 +395,242 @@
     .nr1-table__bar-wrap { display: none; }
     .nr1-chart-container { height: 250px; }
 }
+
+/* ══════════════════════════════════════════════
+   PRINT STYLES — PDF PROFESSIONAL OUTPUT
+   ══════════════════════════════════════════════ */
+@media print {
+    /* ── Page Setup ────────────────────────── */
+    @page {
+        size: A4;
+        margin: 20mm 15mm 30mm 15mm;
+    }
+    
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+    
+    /* ── Hide Interactive Elements ─────────── */
+    .nr1-header__actions,
+    button,
+    .button {
+        display: none !important;
+    }
+    
+    /* ── Page Container ────────────────────── */
+    .nr1-page {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* ── Header ────────────────────────────── */
+    .nr1-header {
+        page-break-after: avoid;
+        border-bottom: 2px solid #333;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .nr1-header__title {
+        font-size: 20pt;
+        color: #000;
+    }
+    
+    .nr1-header__subtitle {
+        font-size: 10pt;
+        color: #333;
+    }
+    
+    /* ── KPIs ──────────────────────────────── */
+    .nr1-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        page-break-inside: avoid;
+        margin-bottom: 1.5rem;
+    }
+    
+    .nr1-kpi {
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        page-break-inside: avoid;
+        padding: 1rem;
+    }
+    
+    .nr1-kpi::before {
+        display: none;
+    }
+    
+    .nr1-kpi__label {
+        font-size: 8pt;
+        color: #666;
+    }
+    
+    .nr1-kpi__value {
+        font-size: 16pt;
+        color: #000;
+    }
+    
+    /* ── Legend ────────────────────────────── */
+    .nr1-legend {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* ── Sections ──────────────────────────── */
+    .nr1-section {
+        page-break-inside: avoid;
+        margin-bottom: 2rem;
+    }
+    
+    .nr1-section__head {
+        page-break-after: avoid;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .nr1-section__title {
+        font-size: 14pt;
+        color: #000;
+    }
+    
+    .nr1-section__kicker {
+        font-size: 8pt;
+        background: #f0f0f0;
+        color: #333;
+    }
+    
+    /* ── Charts ────────────────────────────── */
+    .nr1-chart-container {
+        page-break-inside: avoid !important;
+        page-break-before: auto;
+        page-break-after: auto;
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* ── Tables ────────────────────────────── */
+    .nr1-table {
+        page-break-inside: auto;
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    .nr1-table thead {
+        display: table-header-group;
+    }
+    
+    .nr1-table tr {
+        page-break-inside: avoid;
+    }
+    
+    .nr1-table td,
+    .nr1-table th {
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+    }
+    
+    .nr1-table th {
+        background: #f0f0f0;
+        font-size: 8pt;
+        color: #333;
+    }
+    
+    .nr1-table td {
+        font-size: 9pt;
+    }
+    
+    /* ── Progress Bars (ensure visible) ────── */
+    .nr1-table__bar-wrap {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    .nr1-progress {
+        border: 1px solid #ddd;
+    }
+    
+    /* ── Badges ────────────────────────────── */
+    .nr1-badge {
+        border: 1px solid #333;
+        font-size: 7pt;
+    }
+    
+    /* ── Distribution Grid ─────────────────── */
+    .nr1-dist-grid {
+        page-break-inside: avoid;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .nr1-dist-item {
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+    }
+    
+    /* ── Risk List ─────────────────────────── */
+    .nr1-risk-list {
+        page-break-inside: auto;
+    }
+    
+    .nr1-risk-item {
+        page-break-inside: avoid;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    /* ── Alert ─────────────────────────────── */
+    .nr1-alert {
+        page-break-inside: avoid;
+        border: 1px solid #c00;
+        background: #fff5f5;
+    }
+    
+    /* ── Color Adjustments for Print ───────── */
+    .nr1-kpi__value--baixo,
+    .nr1-risk-item__avg--baixo {
+        color: #c00 !important;
+    }
+    
+    .nr1-kpi__value--medio {
+        color: #c60 !important;
+    }
+    
+    .nr1-kpi__value--alto,
+    .nr1-risk-item__avg--alto {
+        color: #060 !important;
+    }
+    
+    /* ── Professional Footer ───────────────── */
+    body::after {
+        content: "AMFRA SAÚDE MENTAL - Avaliação Clínica Digital";
+        display: block;
+        position: fixed;
+        bottom: 10mm;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 9pt;
+        color: #666;
+        border-top: 1px solid #ddd;
+        padding-top: 8pt;
+        background: #fff;
+    }
+}
 </style>
 
 <!-- Chart.js Library -->
@@ -617,6 +853,10 @@
 {% if report.status == "success" %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Store chart instances for print handling
+    let consolidatedChartInstance = null;
+    let radarChartInstance = null;
+    
     // ═══════════════════════════════════════════════════════════
     // GRÁFICO 1: Barras Horizontais - Distribuição de Riscos
     // ═══════════════════════════════════════════════════════════
@@ -638,8 +878,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const total = chartData.counts.reduce((a, b) => a + b, 0);
         
-        // Criar gráfico
-        new Chart(ctx, {
+        // Criar gráfico e armazenar instância
+        consolidatedChartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: chartData.labels,
@@ -738,8 +978,8 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         };
         
-        // Criar gráfico radar
-        new Chart(radarCtx, {
+        // Criar gráfico radar e armazenar instância
+        radarChartInstance = new Chart(radarCtx, {
             type: 'radar',
             data: {
                 labels: dimensionData.labels,
@@ -815,6 +1055,65 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Failed to initialize radar chart:', error);
         radarCtx.parentElement.innerHTML = '<p style="text-align:center;color:#64748b;padding:2rem;">Não foi possível carregar o gráfico radar.</p>';
     }
+    
+    // ═══════════════════════════════════════════════════════════
+    // PRINT EVENT HANDLERS - Convert charts to static images
+    // ═══════════════════════════════════════════════════════════
+    window.addEventListener('beforeprint', function() {
+        // Convert consolidated chart to static image
+        if (consolidatedChartInstance) {
+            const canvas = consolidatedChartInstance.canvas;
+            const imageData = canvas.toDataURL('image/png');
+            const img = new Image();
+            img.src = imageData;
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            canvas.style.display = 'none';
+            canvas.parentNode.insertBefore(img, canvas);
+            canvas.dataset.printImage = 'true';
+        }
+        
+        // Convert radar chart to static image
+        if (radarChartInstance) {
+            const canvas = radarChartInstance.canvas;
+            const imageData = canvas.toDataURL('image/png');
+            const img = new Image();
+            img.src = imageData;
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            canvas.style.display = 'none';
+            canvas.parentNode.insertBefore(img, canvas);
+            canvas.dataset.printImage = 'true';
+        }
+    });
+    
+    window.addEventListener('afterprint', function() {
+        // Restore consolidated chart
+        if (consolidatedChartInstance) {
+            const canvas = consolidatedChartInstance.canvas;
+            if (canvas.dataset.printImage) {
+                const img = canvas.previousSibling;
+                if (img && img.tagName === 'IMG') {
+                    img.remove();
+                }
+                canvas.style.display = '';
+                delete canvas.dataset.printImage;
+            }
+        }
+        
+        // Restore radar chart
+        if (radarChartInstance) {
+            const canvas = radarChartInstance.canvas;
+            if (canvas.dataset.printImage) {
+                const img = canvas.previousSibling;
+                if (img && img.tagName === 'IMG') {
+                    img.remove();
+                }
+                canvas.style.display = '';
+                delete canvas.dataset.printImage;
+            }
+        }
+    });
 });
 </script>
 {% endif %}
