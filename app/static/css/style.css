@@ -110,6 +110,19 @@ textarea {
 }
 
 .brandmark {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.brandmark__logo {
+    height: 50px;
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.brandmark__text {
     display: grid;
     gap: 0.1rem;
 }

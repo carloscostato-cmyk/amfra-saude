@@ -189,7 +189,7 @@ static/
 │   ├── main.js                   # Scripts gerais
 │   └── submission_detail.js      # Scripts de detalhes (gráficos)
 └── img/
-    ├── logo-deiapsic.svg         # Logo da empresa
+    ├── logo.jpg                  # Logo da empresa AMFRA SAÚDE MENTAL
     └── brain-icon.svg            # Ícone de cérebro
 ```
 
