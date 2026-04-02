@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMFRA SAÚDE MENTAL - Carregando</title>
+    <title>AMFRA</title>
     <style>
         * {
             margin: 0;
@@ -17,292 +17,51 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-        }
-
-        .loading-container {
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo-container {
-            margin-bottom: 40px;
         }
 
         .logo {
-            max-width: 800px;
-            width: 90%;
+            width: 100px;
             height: auto;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: pulse 2s infinite alternate;
+            opacity: 0;
+            animation: zoomIn 7s ease-in-out forwards;
         }
 
-        @keyframes pulse {
+        @keyframes zoomIn {
             0% {
+                transform: scale(0.1);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
                 transform: scale(1);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            }
-            100% {
-                transform: scale(1.05);
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+                opacity: 1;
             }
         }
 
-        .loading-title {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .loading-subtitle {
-            color: #cbd5e0;
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        .progress-container {
-            width: 100%;
-            margin-bottom: 30px;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #4299e1, #667eea);
-            border-radius: 10px;
-            transition: width 0.1s linear;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255, 255, 255, 0.3) 50%, 
-                transparent 100%);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        .loading-message {
-            color: #a0aec0;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            font-style: italic;
-            min-height: 20px;
-        }
-
-        .loading-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            color: #718096;
-            font-size: 0.8rem;
-        }
-
-        .step {
-            text-align: center;
-            flex: 1;
-            padding: 10px;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-
-        .step.active {
-            opacity: 1;
-            color: #4299e1;
-            font-weight: 600;
-        }
-
-        .step-icon {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .loading-container {
-                padding: 30px 20px;
-            }
-            
+        @media (min-width: 768px) {
             .logo {
-                max-width: 200px;
+                width: 800px;
             }
-            
-            .loading-title {
-                font-size: 2rem;
-            }
-            
-            .loading-subtitle {
-                font-size: 1rem;
+        }
+
+        @media (max-width: 767px) {
+            .logo {
+                width: 90vw;
+                max-width: 500px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="loading-container">
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='img/amfra_logo.jpeg') }}" alt="AMFRA SAÚDE MENTAL" class="logo">
-        </div>
-        
-        <h1 class="loading-title">AMFRA SAÚDE MENTAL</h1>
-        <p class="loading-subtitle">Avaliação Clínica Digital - Carregando Sistema</p>
-        
-        <div class="progress-container">
-            <div class="progress-info">
-                <span class="progress-percentage">0%</span>
-                <span class="progress-time">7 segundos</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-        
-        <div class="loading-message" id="loadingMessage">Inicializando sistema...</div>
-        
-        <div class="loading-steps">
-            <div class="step active" id="step1">
-                <span class="step-icon">🔒</span>
-                <span>Segurança</span>
-            </div>
-            <div class="step" id="step2">
-                <span class="step-icon">📊</span>
-                <span>Banco de Dados</span>
-            </div>
-            <div class="step" id="step3">
-                <span class="step-icon">⚙️</span>
-                <span>Configuração</span>
-            </div>
-            <div class="step" id="step4">
-                <span class="step-icon">✅</span>
-                <span>Pronto</span>
-            </div>
-        </div>
-    </div>
+    <img src="{{ url_for('static', filename='img/amfra_logo.jpeg') }}" alt="AMFRA" class="logo">
 
     <script>
-        // Configuração
-        const TOTAL_TIME = 7000; // 7 segundos
-        const UPDATE_INTERVAL = 50; // Atualizar a cada 50ms
-        const STEPS = [
-            { time: 0, message: "Inicializando sistema de segurança..." },
-            { time: 1500, message: "Conectando ao banco de dados..." },
-            { time: 3000, message: "Carregando configurações do sistema..." },
-            { time: 4500, message: "Preparando dashboard administrativo..." },
-            { time: 6000, message: "Sistema pronto! Redirecionando..." }
-        ];
-
-        // Elementos DOM
-        const progressFill = document.getElementById('progressFill');
-        const progressPercentage = document.querySelector('.progress-percentage');
-        const loadingMessage = document.getElementById('loadingMessage');
-        const steps = [
-            document.getElementById('step1'),
-            document.getElementById('step2'),
-            document.getElementById('step3'),
-            document.getElementById('step4')
-        ];
-
-        // Variáveis de controle
-        let startTime = Date.now();
-        let currentStep = 0;
-
-        // Funç��o para atualizar a barra de progresso
-        function updateProgress() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / TOTAL_TIME, 1);
-            const percentage = Math.round(progress * 100);
-            
-            // Atualizar barra e porcentagem
-            progressFill.style.width = `${percentage}%`;
-            progressPercentage.textContent = `${percentage}%`;
-            
-            // Atualizar mensagem baseada no tempo
-            for (let i = STEPS.length - 1; i >= 0; i--) {
-                if (elapsed >= STEPS[i].time) {
-                    if (currentStep !== i) {
-                        currentStep = i;
-                        loadingMessage.textContent = STEPS[i].message;
-                        
-                        // Atualizar steps ativos
-                        steps.forEach((step, index) => {
-                            if (index <= Math.floor(i / (STEPS.length / steps.length))) {
-                                step.classList.add('active');
-                            } else {
-                                step.classList.remove('active');
-                            }
-                        });
-                    }
-                    break;
-                }
-            }
-            
-            // Verificar se terminou
-            if (progress >= 1) {
-                clearInterval(progressInterval);
-                setTimeout(() => {
-                    window.location.href = '/admin/login';
-                }, 500);
-            }
-        }
-
-        // Iniciar atualização
-        const progressInterval = setInterval(updateProgress, UPDATE_INTERVAL);
-        
-        // Inicializar
-        updateProgress();
-        
-        // Prevenir que o usuário saia durante o loading
-        window.addEventListener('beforeunload', function(e) {
-            if (Date.now() - startTime < TOTAL_TIME) {
-                e.preventDefault();
-                e.returnValue = 'O sistema ainda está carregando. Deseja realmente sair?';
-            }
-        });
+        setTimeout(() => {
+            window.location.href = '/admin/login';
+        }, 7000);
     </script>
 </body>
 </html>
