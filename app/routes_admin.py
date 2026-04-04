@@ -11,7 +11,7 @@ from .extensions import db
 from .forms import AdminLoginForm, CompanyForm
 from .models import AdminUser, Company, Employee, Submission
 from .questionnaire import QUESTION_DEFINITIONS
-from .services import CLASSIFICATION_RULES, NR1StudyAgent
+from .services import CLASSIFICATION_RULES, NR1MaterialOrchestrator, NR1StudyAgent
 from .services.links import build_public_questionnaire_url
 
 
@@ -159,10 +159,16 @@ def company_detail(company_id):
 def company_nr1_report(company_id):
     agent = NR1StudyAgent(company_id)
     report = agent.run_study()
+    material_orchestrator = NR1MaterialOrchestrator()
+    material_brief = material_orchestrator.build_client_brief(
+        company_name=agent.company.name,
+        company_note=agent.company.hr_data,
+    )
     return render_template(
         "admin_company_nr1.html",
         company=agent.company,
         report=report,
+        material_brief=material_brief,
         body_class="page-admin-dashboard",
     )
 

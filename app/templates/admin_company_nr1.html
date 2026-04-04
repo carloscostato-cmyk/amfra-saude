@@ -69,6 +69,14 @@
     padding-top: 0.25rem;
 }
 
+.nr1-print-cover {
+    display: none;
+}
+
+.nr1-print-cover__inner {
+    display: none;
+}
+
 /* ── Métricas KPI ───────────────────────────── */
 .nr1-kpis {
     display: grid;
@@ -186,6 +194,109 @@
     color: #0f172a;
     margin: 0;
     letter-spacing: -0.02em;
+}
+
+.nr1-exec-summary {
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    color: #1e293b;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+}
+
+.nr1-page-outline {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.nr1-page-outline__card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1rem 0.9rem;
+    background: #ffffff;
+}
+
+.nr1-page-outline__title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #1d4ed8;
+    margin: 0 0 0.65rem;
+}
+
+.nr1-page-outline__block {
+    margin-bottom: 0.55rem;
+}
+
+.nr1-page-outline__block strong {
+    display: block;
+    color: #0f172a;
+    font-size: 0.92rem;
+    margin-bottom: 0.15rem;
+}
+
+.nr1-page-outline__block p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.88rem;
+    line-height: 1.55;
+}
+
+.nr1-page-outline__coverage {
+    margin: 0.6rem 0 0;
+    padding-top: 0.6rem;
+    border-top: 1px dashed #cbd5e1;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.nr1-orchestration {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.nr1-orchestration__card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.95rem;
+}
+
+.nr1-orchestration__heading {
+    margin: 0 0 0.7rem;
+    font-size: 0.83rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    font-weight: 800;
+}
+
+.nr1-orchestration__item {
+    margin-bottom: 0.6rem;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: #334155;
+}
+
+.nr1-orchestration__item:last-child {
+    margin-bottom: 0;
+}
+
+.nr1-manager-feedback {
+    margin-top: 0.95rem;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 0.9rem;
 }
 
 /* ── Tabela de dimensões ──────────────────── */
@@ -399,6 +510,8 @@
     .nr1-kpis { grid-template-columns: repeat(2, 1fr); }
     .nr1-header { flex-direction: column; }
     .nr1-risk-item { grid-template-columns: 40px 1fr 60px 80px; gap: 0.75rem; }
+    .nr1-page-outline { grid-template-columns: 1fr; }
+    .nr1-orchestration { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
     .nr1-kpis { grid-template-columns: 1fr 1fr; }
@@ -438,21 +551,86 @@
     }
     
     /* ── Header ────────────────────────────── */
+    .nr1-print-cover {
+        display: block !important;
+        min-height: 220mm;
+        page-break-after: always;
+        border: 1px solid #dbeafe;
+        background: linear-gradient(180deg, #eff6ff 0%, #ffffff 50%);
+        border-radius: 14px;
+        padding: 0;
+        margin-bottom: 0;
+    }
+
+    .nr1-print-cover__inner {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 220mm;
+        padding: 20mm;
+        box-sizing: border-box;
+    }
+
+    .nr1-print-cover__kicker {
+        font-size: 9pt;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #1d4ed8;
+        font-weight: 700;
+        margin-bottom: 8mm;
+    }
+
+    .nr1-print-cover__title {
+        font-size: 30pt;
+        line-height: 1.15;
+        color: #0f172a;
+        font-weight: 800;
+        margin: 0;
+        text-align: center;
+    }
+
+    .nr1-print-cover__subtitle {
+        margin-top: 5mm;
+        font-size: 13pt;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    .nr1-print-cover__line {
+        width: 85mm;
+        height: 2px;
+        margin: 7mm auto;
+        background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    }
+
+    .nr1-print-cover__meta {
+        font-size: 10pt;
+        color: #475569;
+        margin-top: 4mm;
+    }
+
     .nr1-header {
-        page-break-after: avoid;
-        border-bottom: 2px solid #333;
-        padding-bottom: 1rem;
-        margin-bottom: 1.5rem;
+        display: none !important;
+    }
+
+    .nr1-header__meta {
+        margin: 0 auto;
     }
     
     .nr1-header__title {
         font-size: 20pt;
         color: #000;
+        text-align: center;
     }
     
     .nr1-header__subtitle {
         font-size: 10pt;
         color: #333;
+        max-width: 130mm;
+        margin: 0 auto;
+        text-align: center;
     }
     
     /* ── KPIs ──────────────────────────────── */
@@ -495,7 +673,7 @@
     
     /* ── Sections ──────────────────────────── */
     .nr1-section {
-        page-break-inside: avoid;
+        page-break-inside: auto;
         margin-bottom: 2rem;
     }
     
@@ -578,6 +756,19 @@
     .nr1-table__bar-wrap {
         display: block !important;
         visibility: visible !important;
+    }
+
+    .nr1-page-outline {
+        display: block;
+    }
+
+    .nr1-page-outline__card,
+    .nr1-orchestration__card,
+    .nr1-manager-feedback,
+    .nr1-exec-summary {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        background: #fff;
     }
     
     .nr1-progress {
@@ -687,6 +878,21 @@
 {% block content %}
 <div class="nr1-page">
 
+    <section class="nr1-print-cover">
+        <div class="nr1-print-cover__inner">
+            <div class="nr1-print-cover__kicker">Relatório Executivo NR-1</div>
+            <h1 class="nr1-print-cover__title">{{ company.name }}</h1>
+            <div class="nr1-print-cover__subtitle">Saúde Organizacional e Riscos Psicossociais</div>
+            <div class="nr1-print-cover__line"></div>
+            <div class="nr1-print-cover__meta">
+                Base metodológica HSE-IT · 35 perguntas · Escala Likert 1-5
+            </div>
+            {% if material_brief and material_brief.generated_at %}
+            <div class="nr1-print-cover__meta">Gerado em {{ material_brief.generated_at }}</div>
+            {% endif %}
+        </div>
+    </section>
+
     {# ── Cabeçalho ───────────────────────── #}
     <div class="nr1-header">
         <div class="nr1-header__meta">
@@ -698,10 +904,71 @@
             </p>
         </div>
         <div class="nr1-header__actions">
-            <button onclick="window.print()" class="button button--primary">Imprimir Relatório</button>
+            <button id="printReportBtn" type="button" class="button button--primary">Imprimir Relatório</button>
             <a href="{{ url_for('admin.company_detail', company_id=company.id) }}" class="button button--ghost">Voltar</a>
         </div>
     </div>
+
+    {% if material_brief and material_brief.status == "ok" %}
+    <div class="nr1-section">
+        <div class="nr1-section__head">
+            <span class="nr1-section__kicker">Resumo para Cliente</span>
+            <h2 class="nr1-section__title">Proposta NR-01 Consolidada (1-2 Páginas)</h2>
+        </div>
+
+        <div class="nr1-exec-summary">
+            {{ material_brief.executive_summary }}
+        </div>
+
+        <div class="nr1-page-outline">
+            {% for page in material_brief.client_outline %}
+            <article class="nr1-page-outline__card">
+                <h3 class="nr1-page-outline__title">Página {{ page.page }} — {{ page.title }}</h3>
+                {% for block in page.blocks %}
+                <div class="nr1-page-outline__block">
+                    <strong>{{ block.title }}</strong>
+                    <p>{{ block.text }}</p>
+                </div>
+                {% endfor %}
+                <p class="nr1-page-outline__coverage">{{ page.coverage }}</p>
+            </article>
+            {% endfor %}
+        </div>
+
+        <div class="nr1-orchestration">
+            <article class="nr1-orchestration__card">
+                <h3 class="nr1-orchestration__heading">4 Agentes - Documentos</h3>
+                {% for agent in material_brief.orchestration.document_agents %}
+                <div class="nr1-orchestration__item">
+                    <strong>{{ agent.name }}</strong>: {{ agent.feedback }}
+                </div>
+                {% endfor %}
+            </article>
+
+            <article class="nr1-orchestration__card">
+                <h3 class="nr1-orchestration__heading">4 Agentes - Projeto Atual</h3>
+                {% for agent in material_brief.orchestration.project_agents %}
+                <div class="nr1-orchestration__item">
+                    <strong>{{ agent.name }}</strong>: {{ agent.feedback }}
+                </div>
+                {% endfor %}
+            </article>
+
+            <article class="nr1-orchestration__card">
+                <h3 class="nr1-orchestration__heading">4 Agentes - Proteção</h3>
+                {% for agent in material_brief.orchestration.guard_agents %}
+                <div class="nr1-orchestration__item">
+                    <strong>{{ agent.name }}</strong>: {{ agent.feedback }}
+                </div>
+                {% endfor %}
+            </article>
+        </div>
+
+        <div class="nr1-manager-feedback">
+            {{ material_brief.orchestration.manager_feedback }}
+        </div>
+    </div>
+    {% endif %}
 
     {% if report.status == "empty" %}
     <div style="text-align:center; padding: 5rem 2rem; color: #64748b;">
@@ -900,6 +1167,60 @@ document.addEventListener('DOMContentLoaded', function() {
     // Store chart instances for print handling
     let consolidatedChartInstance = null;
     let radarChartInstance = null;
+    let chartsPreparedForPrint = false;
+    const preparedChartNodes = [];
+
+    function convertChartCanvasToImage(chartInstance, marker) {
+        if (!chartInstance || !chartInstance.canvas) return;
+
+        const canvas = chartInstance.canvas;
+        if (canvas.dataset.printImage === marker) return;
+
+        chartInstance.resize();
+        chartInstance.update('none');
+
+        const imageData = chartInstance.toBase64Image
+            ? chartInstance.toBase64Image('image/png', 1.0)
+            : canvas.toDataURL('image/png', 1.0);
+
+        if (!imageData || imageData === 'data:,') return;
+
+        const img = document.createElement('img');
+        img.src = imageData;
+        img.className = 'chart-print-image';
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+
+        canvas.style.display = 'none';
+        canvas.parentNode.insertBefore(img, canvas);
+        canvas.dataset.printImage = marker;
+        preparedChartNodes.push({ canvas, img });
+    }
+
+    function prepareChartsForPrint() {
+        if (chartsPreparedForPrint) return;
+        convertChartCanvasToImage(consolidatedChartInstance, 'consolidated');
+        convertChartCanvasToImage(radarChartInstance, 'radar');
+        chartsPreparedForPrint = true;
+    }
+
+    function restoreChartsAfterPrint() {
+        if (!chartsPreparedForPrint) return;
+
+        preparedChartNodes.forEach(({ canvas, img }) => {
+            if (img && img.parentNode) {
+                img.remove();
+            }
+            if (canvas) {
+                canvas.style.display = '';
+                delete canvas.dataset.printImage;
+            }
+        });
+
+        preparedChartNodes.length = 0;
+        chartsPreparedForPrint = false;
+    }
     
     // ═══════════════════════════════════════════════════════════
     // GRÁFICO 1: Barras Horizontais - Distribuição de Riscos
@@ -1101,110 +1422,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ═══════════════════════════════════════════════════════════
-    // PRINT EVENT HANDLERS - Convert charts to static images
+    // PRINT EVENT HANDLERS - Reliable chart rendering in PDF
     // ═══════════════════════════════════════════════════════════
+    const printButton = document.getElementById('printReportBtn');
+    if (printButton) {
+        printButton.addEventListener('click', function() {
+            prepareChartsForPrint();
+            setTimeout(function() {
+                window.print();
+            }, 160);
+        });
+    }
+
     window.addEventListener('beforeprint', function() {
-        console.log('[PRINT] beforeprint event triggered');
-        
-        // Convert consolidated chart to static image
-        if (consolidatedChartInstance && consolidatedChartInstance.canvas) {
-            try {
-                const canvas = consolidatedChartInstance.canvas;
-                console.log('[PRINT] Converting consolidated chart to image...');
-                
-                // Force chart render before conversion
-                consolidatedChartInstance.update();
-                
-                // Convert to image with higher quality
-                const imageData = canvas.toDataURL('image/png', 1.0);
-                console.log('[PRINT] Image data length:', imageData.length);
-                
-                const img = document.createElement('img');
-                img.src = imageData;
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                img.style.display = 'block';
-                img.className = 'chart-print-image';
-                
-                // Hide canvas and insert image
-                canvas.style.display = 'none';
-                canvas.parentNode.insertBefore(img, canvas);
-                canvas.dataset.printImage = 'consolidated';
-                
-                console.log('[PRINT] Consolidated chart converted successfully');
-            } catch (error) {
-                console.error('[PRINT] Error converting consolidated chart:', error);
-            }
-        } else {
-            console.warn('[PRINT] Consolidated chart instance not found');
-        }
-        
-        // Convert radar chart to static image
-        if (radarChartInstance && radarChartInstance.canvas) {
-            try {
-                const canvas = radarChartInstance.canvas;
-                console.log('[PRINT] Converting radar chart to image...');
-                
-                // Force chart render before conversion
-                radarChartInstance.update();
-                
-                // Convert to image with higher quality
-                const imageData = canvas.toDataURL('image/png', 1.0);
-                console.log('[PRINT] Image data length:', imageData.length);
-                
-                const img = document.createElement('img');
-                img.src = imageData;
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                img.style.display = 'block';
-                img.className = 'chart-print-image';
-                
-                // Hide canvas and insert image
-                canvas.style.display = 'none';
-                canvas.parentNode.insertBefore(img, canvas);
-                canvas.dataset.printImage = 'radar';
-                
-                console.log('[PRINT] Radar chart converted successfully');
-            } catch (error) {
-                console.error('[PRINT] Error converting radar chart:', error);
-            }
-        } else {
-            console.warn('[PRINT] Radar chart instance not found');
-        }
+        prepareChartsForPrint();
     });
-    
+
     window.addEventListener('afterprint', function() {
-        console.log('[PRINT] afterprint event triggered');
-        
-        // Restore consolidated chart
-        if (consolidatedChartInstance && consolidatedChartInstance.canvas) {
-            const canvas = consolidatedChartInstance.canvas;
-            if (canvas.dataset.printImage === 'consolidated') {
-                const img = canvas.previousSibling;
-                if (img && img.className === 'chart-print-image') {
-                    img.remove();
-                    console.log('[PRINT] Consolidated chart image removed');
-                }
-                canvas.style.display = '';
-                delete canvas.dataset.printImage;
-            }
-        }
-        
-        // Restore radar chart
-        if (radarChartInstance && radarChartInstance.canvas) {
-            const canvas = radarChartInstance.canvas;
-            if (canvas.dataset.printImage === 'radar') {
-                const img = canvas.previousSibling;
-                if (img && img.className === 'chart-print-image') {
-                    img.remove();
-                    console.log('[PRINT] Radar chart image removed');
-                }
-                canvas.style.display = '';
-                delete canvas.dataset.printImage;
-            }
-        }
-        
-        console.log('[PRINT] Charts restored to canvas');
+        setTimeout(function() {
+            restoreChartsAfterPrint();
+        }, 120);
     });
 });
 </script>
